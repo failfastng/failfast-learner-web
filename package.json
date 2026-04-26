@@ -23,6 +23,7 @@
     "react-native-worklets-core": "^1.6.3"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "@types/react": "~19.1.0",
     "jest-expo": "^55.0.16",
     "typescript": "~5.9.2"

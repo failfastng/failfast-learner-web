@@ -1,9 +1,8 @@
-import { View, Text } from 'react-native';
+import { useProgressStore } from '../src/hooks/useProgressStore';
+import ColdOpenStart from '../src/screens/start/ColdOpenStart';
+import ReturningStart from '../src/screens/start/ReturningStart';
 
 export default function StartRoute() {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>FailFast Learner</Text>
-    </View>
-  );
+  const { hasAnyProgress } = useProgressStore();
+  return hasAnyProgress() ? <ReturningStart /> : <ColdOpenStart />;
 }
