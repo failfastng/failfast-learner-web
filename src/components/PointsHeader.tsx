@@ -24,6 +24,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { motion } from '../theme/motion';
+import { LevelUpBar } from './LevelUpBar';
+import type { Subject } from '../types/domain';
 
 // ── Animated Text helper ──────────────────────────────────────────────────────
 // Reanimated v4 does not support animatedProps on Text for 'text' content
@@ -38,6 +40,8 @@ type Props = {
   tappedWrongCount: number;   // state.tappedWrongIndices.length
   currentAttempt: 1 | 2 | 3;
   lastResolution: 'pending' | 'correct' | 'failed-through';
+  subject: Subject;
+  cumulativeSuccess: number;
 };
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -47,6 +51,8 @@ export function PointsHeader({
   tappedWrongCount,
   currentAttempt,
   lastResolution,
+  subject,
+  cumulativeSuccess,
 }: Props) {
   const total = sessionSuccess + sessionGrit;
 
@@ -109,6 +115,9 @@ export function PointsHeader({
           {attemptsLeft === 1 ? '1 attempt left' : `${attemptsLeft} attempts left`}
         </Text>
       )}
+
+      {/* Level-up bar — tier progression toward Skilled */}
+      <LevelUpBar subject={subject} successPoints={cumulativeSuccess} />
     </View>
   );
 }

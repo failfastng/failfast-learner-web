@@ -35,6 +35,8 @@ import { FeedbackCopy } from '../../components/FeedbackCopy';
 import { GritFloat, type GritFloatRef } from '../../components/GritFloat';
 import { OptionCard } from '../../components/OptionCard';
 import { PointsHeader } from '../../components/PointsHeader';
+import { SkilledModal } from '../../components/SkilledModal';
+import { didCrossSkilledThreshold } from '../../lib/tier';
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 type Props = {
@@ -114,6 +116,26 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
     }
   }, [state.lastResolution]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // ── Tier threshold check: fires when a new outcome is resolved ────────────
+  useEffect(() => {
+    if (state.outcomes.length === 0) return;
+    const snapshot = preSessionSnapshotRef.current;
+    if (snapshot === null) return;
+    // Only fire on correct/failed-through resolution
+    if (state.lastResolution === 'pending') return;
+    // Don't fire if already fired this session
+    if (state.skilledFiredThisSession) return;
+    // Tier is already Skilled from a prior session — no modal
+    const priorTier = snapshot.successPoints >= 158 ? 'Skilled' : 'Rookie';
+    if (priorTier === 'Skilled') return;
+
+    const { success: awardedSuccess } = scoreBranch(state.tappedWrongIndices.length);
+    const preSuccess = snapshot.successPoints + (state.sessionSuccess - awardedSuccess);
+    if (didCrossSkilledThreshold(preSuccess, awardedSuccess)) {
+      setTimeout(() => dispatch({ type: 'OPEN_SKILLED_MODAL' }), 500);
+    }
+  }, [state.outcomes.length]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // ── Derive current question ───────────────────────────────────────────────
   const currentQuestionId = state.questionQueue[state.currentIndex];
   const currentQuestion = bank.find((q) => q.id === currentQuestionId) ?? null;
@@ -192,13 +214,15 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
     <View style={styles.wrapper}>
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
 
-        {/* PointsHeader — animated counters, attempt counter */}
+        {/* PointsHeader — animated counters, attempt counter, level-up bar */}
         <PointsHeader
           sessionSuccess={state.sessionSuccess}
           sessionGrit={state.sessionGrit}
           tappedWrongCount={state.tappedWrongIndices.length}
           currentAttempt={state.currentAttempt}
           lastResolution={state.lastResolution}
+          subject={subject}
+          cumulativeSuccess={(preSessionSnapshotRef.current?.successPoints ?? 0) + state.sessionSuccess}
         />
 
         {/* Session progress bar — 10 segments */}
@@ -325,6 +349,13 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
       {/* GritFloat — absolute, pointer-events none, z-index 999 */}
       {/* Rendered outside ScrollView so position is relative to wrapper, not scroll */}
       <GritFloat ref={gritFloatRef} />
+
+      {/* SkilledModal — shown when tier crosses 158 success points */}
+      <SkilledModal
+        visible={state.skilledModalOpen}
+        subject={subject}
+        onContinue={() => dispatch({ type: 'CLOSE_SKILLED_MODAL' })}
+      />
     </View>
   );
 }
