@@ -7,6 +7,7 @@ import { useSessionReducer } from '../../src/hooks/useSessionReducer';
 import { clearSeenIds, getSubjectProgress } from '../../src/lib/storage';
 import { selectNextQuestion } from '../../src/lib/rotation';
 import { QuestionPhase } from '../../src/screens/practice/QuestionPhase';
+import { SummaryPhase } from '../../src/screens/practice/SummaryPhase';
 import type { Subject } from '../../src/types/domain';
 
 const VALID_SUBJECTS: Subject[] = ['maths', 'english', 'economics'];
@@ -75,17 +76,14 @@ export default function PracticeRoute() {
     );
   }
 
-  // ── Summary placeholder (Item 14 implements fully) ───────────────────────
+  // ── Summary phase ────────────────────────────────────────────────────────
   if (state.phase === 'summary') {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-        <Text style={{ fontSize: 18, textAlign: 'center' }}>
-          Summary coming in Item 14
-        </Text>
-        <Text style={{ marginTop: 8, color: '#666', textAlign: 'center' }}>
-          Session complete — {state.outcomes.length} outcome(s) recorded.
-        </Text>
-      </View>
+      <SummaryPhase
+        state={state}
+        dispatch={dispatch}
+        subject={subject}
+      />
     );
   }
 
