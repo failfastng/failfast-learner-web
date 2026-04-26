@@ -28,6 +28,7 @@ function notify(): void {
 }
 
 function getSnapshot(): Record<Subject, SubjectProgress> {
+  if (typeof window === 'undefined') return getServerSnapshot();
   if (snapshotCache === null) {
     snapshotCache = getProgress();
   }
