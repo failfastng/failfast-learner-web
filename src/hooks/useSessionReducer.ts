@@ -5,7 +5,7 @@ import type { Outcome, Question, SessionState, Subject } from '../types/domain';
 // ── Action union ──────────────────────────────────────────────────────────────
 export type Action =
   | { type: 'LOADED'; queue: Question[] }
-  | { type: 'TAP_OPTION'; optionIndex: number; isCorrect: boolean }
+  | { type: 'TAP_OPTION'; optionIndex: number; isCorrect: boolean; tapPosition?: { x: number; y: number } }
   | { type: 'NEXT_QUESTION' }
   | { type: 'OPEN_END_CONFIRM' }
   | { type: 'CLOSE_END_CONFIRM' }
