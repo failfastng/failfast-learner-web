@@ -54,6 +54,11 @@ export function useQuestionBank(): BankState {
     // Cache miss or stale — fetch and block render on result
     fetchBank()
       .then((questions) => {
+        if (questions.length === 0) {
+          // API returned empty bank — treat as error to avoid infinite spinner
+          setState({ bank: [], isReady: false, error: true });
+          return;
+        }
         setQuestionCache({ fetchedAt: Date.now(), questions });
         setState({ bank: questions, isReady: true, error: false });
       })
