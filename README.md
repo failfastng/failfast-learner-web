@@ -24,23 +24,17 @@ npm test             # Unit tests
 Web bundle is auto-deployed to Cloudflare Pages from the `main` branch.
 Build command: `npx expo export --platform web`
 Output directory: `dist/`
-Node version: 20
+Node version: 22
 
 ## Web head injection
 
-**Current mechanism:** `app.config.ts > web.meta`
+**Confirmed working mechanism: `app/+html.tsx`**
 
-OG and Twitter meta tags are declared in `app.config.ts` under `web.meta`. Expo SDK 54 with Metro bundler is expected to inject these as `<meta>` tags into the generated `dist/index.html` at export time.
+Expo Router's HTML root file (`app/+html.tsx`) is the correct way to inject custom `<head>` content on SDK 54. This file runs at `expo export` time in Node — not in the browser — and wraps the entire app in a real HTML document shell.
 
-**Status:** to be verified on first CF Pages deploy (Item 3 verify step — see `docs/runbooks/02-cf-pages-deploy.md` Step 4).
+All OG and Twitter meta tags live in `app/+html.tsx`. Do not use `app.config.ts > web.meta` for this — that mechanism does not reliably inject arbitrary meta tags on SDK 54 with Metro bundler.
 
-**Fallback order if `app.config.ts > web.meta` fails to inject tags** (run verification probe first, then apply the first fallback that works):
-
-1. Add `<head>` component to `app/_layout.tsx` using Expo Router's `<Head>` API (`expo-router/head`) with explicit `<meta property="og:..." />` tags.
-2. Create `public/index.html` template with hardcoded meta tags in `<head>` — Expo will use this as the HTML shell.
-3. Add `/_headers` file at the root of the project (committed to repo, deployed to CF Pages) mapping `/*` to inject headers; note this works for HTTP response headers only, not HTML `<meta>` tags — use fallback 2 instead if meta injection is the requirement.
-
-**Update this section** after first deploy verification: note which mechanism was confirmed working and remove the fallback list.
+**To update OG tags** (e.g., when replacing the placeholder image in Item 20): edit `app/+html.tsx` directly.
 
 ---
 

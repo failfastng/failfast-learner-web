@@ -41,7 +41,7 @@ Email continuity (Google Workspace) depends on the DKIM, SPF, and MX records abo
 
    | Variable               | Value                                      |
    |------------------------|--------------------------------------------|
-   | `NODE_VERSION`         | `20`                                       |
+   | `NODE_VERSION`         | `22`                                       |
    | `EXPO_PUBLIC_API_BASE` | `https://api.learner.failfastng.com`       |
 
 6. Click **Save and Deploy**
