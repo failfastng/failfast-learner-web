@@ -18,7 +18,12 @@
 
 import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from 'react-native-reanimated';
 import { motion } from '../theme/motion';
 
 // ── Public API ────────────────────────────────────────────────────────────────
@@ -49,9 +54,11 @@ export const GritFloat = forwardRef<GritFloatRef, object>((_, ref) => {
       keyRef.current += 1;
       setAnimKey(keyRef.current);
 
-      // Animate out: fade to 0 + float up -60
-      opacity.value = withTiming(0, { duration: motion.gritFloatMs });
-      translateY.value = withTiming(-60, { duration: motion.gritFloatMs });
+      // Hold fully visible for 700ms, then fade out over 500ms.
+      // translateY rises slowly over the full duration so the label floats
+      // while readable, then clears the screen on fade-out.
+      opacity.value = withDelay(700, withTiming(0, { duration: 500 }));
+      translateY.value = withTiming(-50, { duration: 1200 });
     },
   }));
 
