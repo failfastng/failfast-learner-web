@@ -6,10 +6,16 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
-  Animated,
   Linking,
   Platform,
 } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { locked } from '../../copy/locked';
 import { colors } from '../../theme/colors';
@@ -30,29 +36,23 @@ export default function ColdOpenStart() {
   const [nameInput, setNameInput] = useState('');
 
   // Subtle pulse animation on the Start button — fires once on first selection
-  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const pulseScale = useSharedValue(1);
   const pulseStarted = useRef(false);
+  const pulseStyle = useAnimatedStyle(() => ({ transform: [{ scale: pulseScale.value }] }));
 
   useEffect(() => {
     if (selectedSubject && !pulseStarted.current) {
       pulseStarted.current = true;
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(pulseAnim, {
-            toValue: 0.85,
-            duration: 700,
-            useNativeDriver: true,
-          }),
-          Animated.timing(pulseAnim, {
-            toValue: 1,
-            duration: 700,
-            useNativeDriver: true,
-          }),
-        ]),
-        { iterations: 3 }
-      ).start();
+      pulseScale.value = withRepeat(
+        withSequence(
+          withTiming(0.92, { duration: 700 }),
+          withTiming(1, { duration: 700 }),
+        ),
+        3,
+        false
+      );
     }
-  }, [selectedSubject, pulseAnim]);
+  }, [selectedSubject]);
 
   function handleStart() {
     if (!selectedSubject) return;
@@ -108,7 +108,7 @@ export default function ColdOpenStart() {
       </View>
 
       {/* Start Practice button */}
-      <Animated.View style={{ opacity: selectedSubject ? 1 : 0.4, transform: [{ scale: pulseAnim }] }}>
+      <Animated.View style={[{ opacity: selectedSubject ? 1 : 0.4 }, pulseStyle]}>
         <TouchableOpacity
           style={[
             styles.startButton,
