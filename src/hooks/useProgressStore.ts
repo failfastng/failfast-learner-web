@@ -10,17 +10,28 @@ import type { Subject, SubjectProgress } from '../types/domain';
 type Listener = () => void;
 const listeners = new Set<Listener>();
 
+// Stable snapshot cache — useSyncExternalStore calls getSnapshot() multiple
+// times per render to check for tearing. If we return a new object reference
+// every call (from JSON.parse), React detects "inconsistency" and re-renders
+// infinitely (error #185). Solution: cache the reference; only replace it when
+// notify() fires (i.e., when data actually changed).
+let snapshotCache: Record<Subject, SubjectProgress> | null = null;
+
 function subscribe(listener: Listener): () => void {
   listeners.add(listener);
   return () => listeners.delete(listener);
 }
 
 function notify(): void {
+  snapshotCache = null; // invalidate so next getSnapshot() reads fresh data
   listeners.forEach((l) => l());
 }
 
 function getSnapshot(): Record<Subject, SubjectProgress> {
-  return getProgress();
+  if (snapshotCache === null) {
+    snapshotCache = getProgress();
+  }
+  return snapshotCache;
 }
 
 // Server snapshot — safe fallback for SSR / static export
