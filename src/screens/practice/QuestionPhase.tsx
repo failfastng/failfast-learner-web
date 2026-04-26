@@ -22,6 +22,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
 
 import { useProgressStore } from '../../hooks/useProgressStore';
 import { getSubjectProgress, markQuestionSeen } from '../../lib/storage';
@@ -46,6 +47,7 @@ type Props = {
 // ── Component ─────────────────────────────────────────────────────────────────
 export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
   const progressStore = useProgressStore();
+  const router = useRouter();
 
   // Snapshot the pre-session cumulative totals once at mount so write-through
   // always computes ABSOLUTE cumulative = snapshot + session_running_total.
@@ -176,8 +178,10 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
       state.outcomes.length === 0 && state.tappedWrongIndices.length === 0;
     dispatch({ type: 'CLOSE_END_CONFIRM' });
     if (noInteraction) {
-      // Zero-interaction: go back to start, no summary, no analytics
-      // Item 13 wires the full router.replace('/') path
+      // Zero-interaction: no summary phase, no analytics POST.
+      // router.replace ensures the practice route is removed from history
+      // so Back doesn't return to a stale session.
+      router.replace('/');
     } else {
       dispatch({ type: 'CONFIRM_END_SESSION' });
     }
@@ -203,7 +207,9 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
           accessibilityLabel={`Question ${state.currentIndex + 1} of 10`}
         >
           {Array.from({ length: 10 }).map((_, i) => {
-            const isResolved = i < state.outcomes.length;
+            const outcome = i < state.outcomes.length ? state.outcomes[i] : null;
+            const isResolved = outcome !== null && outcome !== 'abandoned';
+            const isAbandoned = outcome === 'abandoned';
             const isCurrent = i === state.currentIndex;
             return (
               <View
@@ -211,7 +217,8 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
                 style={[
                   styles.progressSegment,
                   isResolved && styles.progressSegmentResolved,
-                  isCurrent && !isResolved && styles.progressSegmentCurrent,
+                  isAbandoned && styles.progressSegmentAbandoned,
+                  isCurrent && !isResolved && !isAbandoned && styles.progressSegmentCurrent,
                 ]}
               />
             );
@@ -358,6 +365,10 @@ const styles = StyleSheet.create({
   progressSegmentResolved: {
     backgroundColor: '#4CAF50',
     borderColor: '#4CAF50',
+  },
+  progressSegmentAbandoned: {
+    backgroundColor: '#e0e0e0',
+    borderColor: '#bbb',
   },
   progressSegmentCurrent: {
     borderColor: '#999',

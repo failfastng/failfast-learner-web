@@ -145,19 +145,23 @@ function sessionReducer(state: SessionState, action: Action): SessionState {
       return { ...state, endConfirmOpen: false };
 
     // ── CONFIRM_END_SESSION ──────────────────────────────────────────────────
-    // If the current question has had wrong taps (mid-attempt, unresolved),
-    // push 'abandoned' to outcomes and increment abandonedCount.
+    // If the current question has had wrong taps but isn't resolved → abandoned.
+    // lastResolution guard: if the question is already resolved (correct or
+    // failed-through), no abandoned entry — the outcome was already pushed.
     // Else (ended cleanly between questions), just transition to summary.
     case 'CONFIRM_END_SESSION': {
-      const hasWrongTapsOnCurrent = state.tappedWrongIndices.length > 0;
+      const isAbandoned =
+        state.tappedWrongIndices.length > 0 &&
+        state.lastResolution === 'pending';
       return {
         ...state,
-        outcomes: hasWrongTapsOnCurrent
+        outcomes: isAbandoned
           ? [...state.outcomes, 'abandoned']
           : state.outcomes,
-        abandonedCount: hasWrongTapsOnCurrent
+        abandonedCount: isAbandoned
           ? state.abandonedCount + 1
           : state.abandonedCount,
+        lastActivityAt: nowISO(),
         phase: 'summary',
       };
     }
