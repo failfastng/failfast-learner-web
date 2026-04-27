@@ -11,7 +11,7 @@ import { useRouter } from 'expo-router';
 import { locked } from '../copy/locked';
 import { colors } from '../theme/colors';
 import { fontSize, fontWeight } from '../theme/type';
-import { analytics } from '../lib/analytics';
+import { postResetEvent } from '../lib/analytics';
 import { wipeForReset, getSessionId } from '../lib/storage';
 
 interface Props {
@@ -25,7 +25,7 @@ export default function ResetConfirmModal({ visible, onClose }: Props) {
   function handleReset() {
     // 1. Fire analytics (fire-and-forget)
     const sessionId = getSessionId();
-    analytics.postResetEvent(sessionId);
+    postResetEvent(sessionId);
 
     // 2. Wipe localStorage and regenerate sessionId
     wipeForReset();

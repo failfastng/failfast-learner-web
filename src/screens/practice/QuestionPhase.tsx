@@ -25,9 +25,12 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { useProgressStore } from '../../hooks/useProgressStore';
-import { getSubjectProgress, markQuestionSeen } from '../../lib/storage';
+import { getSubjectProgress, markQuestionSeen, getWaitlistedAt } from '../../lib/storage';
 import { locked } from '../../copy/locked';
 import { scoreBranch } from '../../lib/scoring';
+import { hashDisplayName } from '../../lib/hash';
+import { postSessionEnd, buildSessionEndPayload } from '../../lib/analytics';
+import { getDisplayName } from '../../lib/displayName';
 import type { Action } from '../../hooks/useSessionReducer';
 import type { Question, SessionState, Subject } from '../../types/domain';
 
@@ -55,6 +58,9 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
   // always computes ABSOLUTE cumulative = snapshot + session_running_total.
   const preSessionSnapshotRef = useRef<{ successPoints: number; gritPoints: number } | null>(null);
 
+  // Capture waitlisted-at state at session start to detect new signups
+  const sessionStartWaitlistedAtRef = useRef<string | null>(null);
+
   // Last tap position for GritFloat
   const lastTapPosition = useRef<{ x: number; y: number }>({ x: 100, y: 300 });
 
@@ -71,6 +77,24 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
       };
     }
   }, [subject]);
+
+  // ── Capture waitlisted-at state once at mount ─────────────────────────────
+  useEffect(() => {
+    sessionStartWaitlistedAtRef.current = getWaitlistedAt();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Analytics: fire postSessionEnd when phase transitions to summary ──────
+  useEffect(() => {
+    if (state.phase !== 'summary') return;
+    hashDisplayName(getDisplayName()).then(hash => {
+      postSessionEnd(buildSessionEndPayload(
+        state,
+        subject,
+        hash,
+        sessionStartWaitlistedAtRef.current,
+      ));
+    });
+  }, [state.phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Write-through: fires on every new outcome resolution ──────────────────
   useEffect(() => {
