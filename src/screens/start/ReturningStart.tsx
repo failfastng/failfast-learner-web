@@ -51,7 +51,12 @@ export default function ReturningStart() {
         </View>
 
         {/* Wordmark */}
-        <Text style={styles.wordmark}>FailFast</Text>
+        <View style={styles.wordmarkRow}>
+          <Text style={styles.wordmark}>FailFast</Text>
+          <View style={styles.miniBadge}>
+            <Text style={styles.miniBadgeText}>mini</Text>
+          </View>
+        </View>
 
         {/* NO tagline, NO explainer — returning state is Things 3 register */}
 
@@ -136,11 +141,15 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     textDecorationLine: 'underline',
   },
+  wordmarkRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 32,
+  },
   wordmark: {
     fontSize: fontSize.hero,
     fontWeight: fontWeight.bold,
     color: colors.textPrimary,
-    marginBottom: 32,
     letterSpacing: -1,
   },
   nameSection: {

@@ -64,7 +64,12 @@ export default function ColdOpenStart() {
   return (
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       {/* Wordmark */}
-      <Text style={styles.wordmark}>FailFast</Text>
+      <View style={styles.wordmarkRow}>
+        <Text style={styles.wordmark}>FailFast</Text>
+        <View style={styles.miniBadge}>
+          <Text style={styles.miniBadgeText}>mini</Text>
+        </View>
+      </View>
 
       {/* Tagline */}
       <Text style={styles.tagline}>{locked.taglineCold}</Text>
@@ -137,12 +142,30 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     backgroundColor: colors.background,
   },
+  wordmarkRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 24,
+  },
   wordmark: {
     fontSize: fontSize.hero,
     fontWeight: fontWeight.bold,
     color: colors.textPrimary,
-    marginBottom: 24,
     letterSpacing: -1,
+  },
+  miniBadge: {
+    backgroundColor: '#f0f0f0',
+    borderRadius: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    marginLeft: 6,
+    marginTop: 6,
+  },
+  miniBadgeText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#888',
+    letterSpacing: 0.5,
   },
   tagline: {
     fontSize: fontSize.xl,
