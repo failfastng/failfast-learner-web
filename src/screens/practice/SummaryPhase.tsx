@@ -17,6 +17,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { getProgress, getWaitlistedAt } from '../../lib/storage';
+import { WaitlistSection } from '../../components/WaitlistSection';
 import { getDisplayName } from '../../lib/displayName';
 import { selectSummaryVariant, countCorrections, countWalkThroughs } from '../../lib/summary';
 import { shareApp } from '../../lib/share';
@@ -135,6 +136,7 @@ function VisualBreak() {
 export function SummaryPhase({ state, dispatch, subject }: Props) {
   const router = useRouter();
   const [resetModalOpen, setResetModalOpen] = useState(false);
+  const [waitlistedAt, setWaitlistedAtState] = useState<string | null>(() => getWaitlistedAt());
 
   // ── Compute variant ────────────────────────────────────────────────────────
   const allProgress = getProgress();
@@ -143,8 +145,6 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
     english: allProgress.english.tier,
     economics: allProgress.economics.tier,
   } as Record<Subject, 'Rookie' | 'Skilled'>;
-
-  const waitlistedAt = getWaitlistedAt();
   const displayName = getDisplayName();
 
   const answered = state.outcomes.filter(o => o !== 'abandoned').length;
@@ -322,6 +322,9 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
   }
 
   // ── Render ────────────────────────────────────────────────────────────────
+  const isAllSkilled = variantRender.variant === 'ALL_SKILLED';
+  const allSkilledState1 = isAllSkilled && variantRender.renderState === 1;
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
 
@@ -331,11 +334,28 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
       {/* VariantBody */}
       <VariantBody />
 
+      {/*
+        ALL_SKILLED state 1: WaitlistSection is primary CTA, rendered ABOVE VisualBreak.
+        Standard variants: WaitlistSection rendered BELOW VisualBreak.
+        ALL_SKILLED state 3: WaitlistSection not rendered.
+      */}
+      {allSkilledState1 && (
+        <WaitlistSection
+          variant="all_skilled"
+          alreadyWaitlisted={false}
+          onWaitlisted={() => setWaitlistedAtState(getWaitlistedAt())}
+        />
+      )}
+
       <VisualBreak />
 
-      {/* WaitlistSection placeholder — Item 16 */}
-      {/* <WaitlistSection /> */}
-      <View />
+      {!isAllSkilled && (
+        <WaitlistSection
+          variant="standard"
+          alreadyWaitlisted={waitlistedAt !== null}
+          onWaitlisted={() => setWaitlistedAtState(getWaitlistedAt())}
+        />
+      )}
 
       {/* PrimaryCTA */}
       <PrimaryCTA />
