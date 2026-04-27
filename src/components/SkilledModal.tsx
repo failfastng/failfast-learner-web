@@ -12,11 +12,10 @@ type Props = {
 
 export function SkilledModal({ visible, subject, onContinue }: Props) {
   const name = getDisplayName() || locked.learnerFallback;
-  const subjectLabel = subject === 'maths' ? 'Maths' : subject === 'english' ? 'English' : 'Economics';
+  const subjectLabel =
+    subject === 'maths' ? 'Maths' : subject === 'english' ? 'English' : 'Economics';
 
-  const body = locked.levelUpModalBody
-    .replace('[Name]', name)
-    .replace('[Subject]', subjectLabel);
+  const body = locked.levelUpModalBody.replace('[Name]', name).replace('[Subject]', subjectLabel);
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onContinue}>

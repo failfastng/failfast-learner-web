@@ -38,7 +38,10 @@ export function useWaitlist(onSuccess?: () => void) {
 
   async function submit(email: string): Promise<void> {
     const err = validateEmail(email);
-    if (err) { setEmailError(err); return; }
+    if (err) {
+      setEmailError(err);
+      return;
+    }
     setEmailError(null);
     lastEmailRef.current = email;
     await doSubmit(email);
@@ -52,5 +55,13 @@ export function useWaitlist(onSuccess?: () => void) {
     setEmailError(validateEmail(email));
   }
 
-  return { submit, isSubmitting, justSubmitted, networkError, retryLast, emailError, onBlurValidate };
+  return {
+    submit,
+    isSubmitting,
+    justSubmitted,
+    networkError,
+    retryLast,
+    emailError,
+    onBlurValidate,
+  };
 }

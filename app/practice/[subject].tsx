@@ -18,7 +18,9 @@ function isValidSubject(s: unknown): s is Subject {
 
 export default function PracticeRoute() {
   const [hydrated, setHydrated] = useState(false);
-  useEffect(() => { setHydrated(true); }, []);
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
 
   const { subject: rawSubject } = useLocalSearchParams<{ subject: string }>();
   const subject = isValidSubject(rawSubject) ? rawSubject : 'maths';
@@ -90,22 +92,9 @@ export default function PracticeRoute() {
 
   // ── Summary phase ────────────────────────────────────────────────────────
   if (state.phase === 'summary') {
-    return (
-      <SummaryPhase
-        state={state}
-        dispatch={dispatch}
-        subject={subject}
-      />
-    );
+    return <SummaryPhase state={state} dispatch={dispatch} subject={subject} />;
   }
 
   // ── Question phase ───────────────────────────────────────────────────────
-  return (
-    <QuestionPhase
-      state={state}
-      dispatch={dispatch}
-      bank={bank}
-      subject={subject}
-    />
-  );
+  return <QuestionPhase state={state} dispatch={dispatch} bank={bank} subject={subject} />;
 }

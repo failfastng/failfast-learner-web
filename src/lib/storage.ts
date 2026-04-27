@@ -60,7 +60,7 @@ function safeSet(key: string, value: unknown): void {
               message:
                 "We couldn't save your progress this session — clear private mode or allow storage to keep your tier progression",
             },
-          })
+          }),
         );
       }
     }
@@ -112,8 +112,11 @@ export function saveDisplayName(name: string): void {
       if (typeof window !== 'undefined') {
         window.dispatchEvent(
           new CustomEvent('ff:quota-exceeded', {
-            detail: { message: "We couldn't save your progress this session — clear private mode or allow storage to keep your tier progression" },
-          })
+            detail: {
+              message:
+                "We couldn't save your progress this session — clear private mode or allow storage to keep your tier progression",
+            },
+          }),
         );
       }
     }
@@ -159,21 +162,16 @@ export function setQuestionCache(cache: QuestionCache): void {
 
 // ── Progress ──────────────────────────────────────────────────────────────────
 export function getProgress(): Record<Subject, SubjectProgress> {
-  const stored = safeGet<Record<Subject, SubjectProgress> | null>(
-    KEYS.progress,
-    null
-  );
+  const stored = safeGet<Record<Subject, SubjectProgress> | null>(KEYS.progress, null);
   if (!stored) return { ...DEFAULT_PROGRESS };
   // Merge to ensure all subjects are present
   return {
     maths: stored.maths ?? { ...DEFAULT_SUBJECT_PROGRESS, seenQuestionIds: [] },
-    english:
-      stored.english ?? { ...DEFAULT_SUBJECT_PROGRESS, seenQuestionIds: [] },
-    economics:
-      stored.economics ?? {
-        ...DEFAULT_SUBJECT_PROGRESS,
-        seenQuestionIds: [],
-      },
+    english: stored.english ?? { ...DEFAULT_SUBJECT_PROGRESS, seenQuestionIds: [] },
+    economics: stored.economics ?? {
+      ...DEFAULT_SUBJECT_PROGRESS,
+      seenQuestionIds: [],
+    },
   };
 }
 
@@ -182,10 +180,7 @@ export function getSubjectProgress(subject: Subject): SubjectProgress {
   return all[subject] ?? { ...DEFAULT_SUBJECT_PROGRESS, seenQuestionIds: [] };
 }
 
-export function writeSubjectProgress(
-  subject: Subject,
-  progress: SubjectProgress
-): void {
+export function writeSubjectProgress(subject: Subject, progress: SubjectProgress): void {
   const all = getProgress();
   all[subject] = progress;
   safeSet(KEYS.progress, all);

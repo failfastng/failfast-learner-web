@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  Modal,
-  TouchableOpacity,
-  StyleSheet,
-  Pressable,
-} from 'react-native';
+import { View, Text, Modal, TouchableOpacity, StyleSheet, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { locked } from '../copy/locked';
 import { colors } from '../theme/colors';
@@ -43,7 +36,12 @@ export default function ResetConfirmModal({ visible, onClose }: Props) {
       accessibilityViewIsModal
     >
       <Pressable style={styles.overlay} onPress={onClose} accessible={false}>
-        <Pressable style={styles.sheet} onPress={() => {/* stop propagation */}}>
+        <Pressable
+          style={styles.sheet}
+          onPress={() => {
+            /* stop propagation */
+          }}
+        >
           <Text style={styles.title}>{locked.resetModalTitle}</Text>
           <Text style={styles.body}>{locked.resetModalBody}</Text>
 

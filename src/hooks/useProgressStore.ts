@@ -49,9 +49,7 @@ export function useProgressStore() {
   const progress = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   function hasAnyProgress(): boolean {
-    return Object.values(progress).some(
-      (p) => p.successPoints > 0 || p.gritPoints > 0
-    );
+    return Object.values(progress).some((p) => p.successPoints > 0 || p.gritPoints > 0);
   }
 
   function getSubjectProgressFromStore(subject: Subject): SubjectProgress {

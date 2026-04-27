@@ -24,8 +24,6 @@ import Animated, {
   withDelay,
   withTiming,
 } from 'react-native-reanimated';
-import { motion } from '../theme/motion';
-
 // ── Public API ────────────────────────────────────────────────────────────────
 export type GritFloatRef = {
   fire: (position: { x: number; y: number }, label: string) => void;
@@ -76,11 +74,7 @@ export const GritFloat = forwardRef<GritFloatRef, object>((_, ref) => {
     >
       <Animated.View
         key={animKey}
-        style={[
-          styles.floatBox,
-          { left: pos.x - 60, top: pos.y - 20 },
-          animStyle,
-        ]}
+        style={[styles.floatBox, { left: pos.x - 60, top: pos.y - 20 }, animStyle]}
       >
         <Text style={styles.floatText}>{label}</Text>
       </Animated.View>

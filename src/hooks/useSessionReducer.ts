@@ -5,7 +5,12 @@ import type { Outcome, Question, SessionState, Subject } from '../types/domain';
 // ── Action union ──────────────────────────────────────────────────────────────
 export type Action =
   | { type: 'LOADED'; queue: Question[] }
-  | { type: 'TAP_OPTION'; optionIndex: number; isCorrect: boolean; tapPosition?: { x: number; y: number } }
+  | {
+      type: 'TAP_OPTION';
+      optionIndex: number;
+      isCorrect: boolean;
+      tapPosition?: { x: number; y: number };
+    }
   | { type: 'NEXT_QUESTION' }
   | { type: 'OPEN_END_CONFIRM' }
   | { type: 'CLOSE_END_CONFIRM' }
@@ -150,17 +155,11 @@ function sessionReducer(state: SessionState, action: Action): SessionState {
     // failed-through), no abandoned entry — the outcome was already pushed.
     // Else (ended cleanly between questions), just transition to summary.
     case 'CONFIRM_END_SESSION': {
-      const isAbandoned =
-        state.tappedWrongIndices.length > 0 &&
-        state.lastResolution === 'pending';
+      const isAbandoned = state.tappedWrongIndices.length > 0 && state.lastResolution === 'pending';
       return {
         ...state,
-        outcomes: isAbandoned
-          ? [...state.outcomes, 'abandoned']
-          : state.outcomes,
-        abandonedCount: isAbandoned
-          ? state.abandonedCount + 1
-          : state.abandonedCount,
+        outcomes: isAbandoned ? [...state.outcomes, 'abandoned'] : state.outcomes,
+        abandonedCount: isAbandoned ? state.abandonedCount + 1 : state.abandonedCount,
         lastActivityAt: nowISO(),
         phase: 'summary',
       };

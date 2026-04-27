@@ -54,11 +54,7 @@ export function FeedbackCopy({ attempt, earnedPoints }: Props) {
 
   return (
     <Text
-      style={[
-        styles.base,
-        isWrong && styles.wrong,
-        isResolved && styles.resolved,
-      ]}
+      style={[styles.base, isWrong && styles.wrong, isResolved && styles.resolved]}
       accessibilityLiveRegion="polite"
       accessibilityRole="text"
     >

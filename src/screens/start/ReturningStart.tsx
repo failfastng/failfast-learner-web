@@ -37,10 +37,7 @@ export default function ReturningStart() {
 
   return (
     <>
-      <ScrollView
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
         {/* Reset progress link — top-right */}
         <View style={styles.topBar}>
           <View style={{ flex: 1 }} />
@@ -79,8 +76,7 @@ export default function ReturningStart() {
         <View style={styles.cardsSection}>
           {ALL_SUBJECTS.map((subject) => {
             const prog = getSubjectProgress(subject);
-            const isNotStarted =
-              prog.successPoints === 0 && prog.gritPoints === 0;
+            const isNotStarted = prog.successPoints === 0 && prog.gritPoints === 0;
             return (
               <SubjectCard
                 key={subject}
@@ -98,10 +94,7 @@ export default function ReturningStart() {
 
         {/* Start Practice button */}
         <TouchableOpacity
-          style={[
-            styles.startButton,
-            !selectedSubject && styles.startButtonDisabled,
-          ]}
+          style={[styles.startButton, !selectedSubject && styles.startButtonDisabled]}
           onPress={handleStart}
           disabled={!selectedSubject}
           accessibilityRole="button"
@@ -109,10 +102,7 @@ export default function ReturningStart() {
           accessibilityState={{ disabled: !selectedSubject }}
         >
           <Text
-            style={[
-              styles.startButtonText,
-              !selectedSubject && styles.startButtonTextDisabled,
-            ]}
+            style={[styles.startButtonText, !selectedSubject && styles.startButtonTextDisabled]}
           >
             {locked.startButton}
           </Text>
@@ -120,10 +110,7 @@ export default function ReturningStart() {
       </ScrollView>
 
       {/* Reset confirm modal */}
-      <ResetConfirmModal
-        visible={resetModalVisible}
-        onClose={() => setResetModalVisible(false)}
-      />
+      <ResetConfirmModal visible={resetModalVisible} onClose={() => setResetModalVisible(false)} />
     </>
   );
 }
@@ -177,6 +164,7 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     backgroundColor: colors.surface,
     outlineStyle: 'none',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any,
   cardsSection: {
     width: '100%',

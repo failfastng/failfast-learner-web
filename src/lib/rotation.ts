@@ -17,13 +17,10 @@ export function selectNextQuestion(
   bank: Question[],
   subject: Subject,
   seenIds: string[],
-  inSessionIds: string[]
+  inSessionIds: string[],
 ): RotationResult {
   const candidates = bank.filter(
-    (q) =>
-      q.subject === subject &&
-      !seenIds.includes(q.id) &&
-      !inSessionIds.includes(q.id)
+    (q) => q.subject === subject && !seenIds.includes(q.id) && !inSessionIds.includes(q.id),
   );
 
   if (candidates.length === 0) {

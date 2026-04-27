@@ -19,6 +19,7 @@ import { useRouter } from 'expo-router';
 import { getProgress, getWaitlistedAt } from '../../lib/storage';
 import { WaitlistSection } from '../../components/WaitlistSection';
 import { getDisplayName } from '../../lib/displayName';
+import type { Href } from 'expo-router';
 import { hashDisplayName } from '../../lib/hash';
 import { buildSessionEndPayload, postSessionEnd } from '../../lib/analytics';
 import { selectSummaryVariant, countCorrections, countWalkThroughs } from '../../lib/summary';
@@ -45,10 +46,10 @@ const SUBJECT_LABELS: Record<Subject, string> = {
 
 // ── MathBlock ─────────────────────────────────────────────────────────────────
 function MathBlock({ state }: { state: SessionState }) {
-  const answered = state.outcomes.filter(o => o !== 'abandoned').length;
+  const answered = state.outcomes.filter((o) => o !== 'abandoned').length;
   const corrections = countCorrections(state.outcomes);
   const walkThroughs = countWalkThroughs(state.outcomes);
-  const firstTry = state.outcomes.filter(o => o === 'first_try_correct').length;
+  const firstTry = state.outcomes.filter((o) => o === 'first_try_correct').length;
   const total = state.sessionSuccess + state.sessionGrit;
 
   let prepend: string;
@@ -145,7 +146,7 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
   // Fire session analytics exactly once when summary mounts
   useEffect(() => {
     const sessionStartWaitlistedAt = getWaitlistedAt();
-    hashDisplayName(getDisplayName()).then(hash => {
+    hashDisplayName(getDisplayName()).then((hash) => {
       const payload = buildSessionEndPayload(state, subject, hash, sessionStartWaitlistedAt);
       postSessionEnd(payload);
     });
@@ -158,9 +159,8 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
     english: allProgress.english.tier,
     economics: allProgress.economics.tier,
   } as Record<Subject, 'Rookie' | 'Skilled'>;
-  const displayName = getDisplayName();
 
-  const answered = state.outcomes.filter(o => o !== 'abandoned').length;
+  const answered = state.outcomes.filter((o) => o !== 'abandoned').length;
   const sessionStats = {
     questionsAnswered: answered,
     abandonedCount: state.abandonedCount,
@@ -180,7 +180,7 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
     sessionStats,
     tierState,
     waitlistedAt,
-    allProgressForVariant
+    allProgressForVariant,
   );
 
   // ── VariantBody ───────────────────────────────────────────────────────────
@@ -199,9 +199,10 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
     }
 
     if (variantRender.variant === 'STRUGGLE') {
-      const template = state.sessionGrit > state.sessionSuccess
-        ? locked.struggleBodyGritLed
-        : locked.struggleBodySuccessLed;
+      const template =
+        state.sessionGrit > state.sessionSuccess
+          ? locked.struggleBodyGritLed
+          : locked.struggleBodySuccessLed;
       const body = template
         .replace(/\[N\]/g, String(variantRender.corrections))
         .replace(/\[M\]/g, String(variantRender.walkThroughs))
@@ -220,7 +221,9 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
     return (
       <>
         <Text style={styles.variantBody}>{locked.allSkilledMilestoneBody}</Text>
-        <Text style={[styles.variantBody, { marginTop: 16 }]}>{locked.allSkilledMissionParagraph}</Text>
+        <Text style={[styles.variantBody, { marginTop: 16 }]}>
+          {locked.allSkilledMissionParagraph}
+        </Text>
       </>
     );
   }
@@ -235,7 +238,7 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
           style={styles.primaryButton}
           onPress={() => {
             dispatch({ type: 'START_RECOMMENDED_SUBJECT', subject: rec });
-            router.push(`/practice/${rec}` as any);
+            router.push(`/practice/${rec}` as Href);
           }}
           accessibilityRole="button"
           accessibilityLabel={label}
@@ -249,7 +252,7 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
       return (
         <Pressable
           style={styles.primaryButton}
-          onPress={() => router.replace(`/practice/${subject}` as any)}
+          onPress={() => router.replace(`/practice/${subject}` as Href)}
           accessibilityRole="button"
           accessibilityLabel={locked.practiceAgainCTA}
         >
@@ -307,7 +310,7 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
       );
     }
 
-    if (isAllSkilled && (renderState === 2 || renderState === 3)) {
+    if (isAllSkilled && renderState === 3) {
       // "Try a different subject" | "Start over" | "Back to start"
       return (
         <View style={styles.tertiaryRow}>
@@ -353,7 +356,6 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
   return (
     <View style={styles.outerContainer}>
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-
         {/* MathBlock — always shown */}
         <MathBlock state={state} />
 
@@ -390,19 +392,11 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
         <TertiaryRow />
 
         {/* Reset Confirm Modal */}
-        <ResetConfirmModal
-          visible={resetModalOpen}
-          onClose={() => setResetModalOpen(false)}
-        />
+        <ResetConfirmModal visible={resetModalOpen} onClose={() => setResetModalOpen(false)} />
       </ScrollView>
 
       {/* Copied toast — absolute overlay */}
-      {showCopiedToast && (
-        <Toast
-          message={locked.toastCopied}
-          durationMs={2500}
-        />
-      )}
+      {showCopiedToast && <Toast message={locked.toastCopied} durationMs={2500} />}
     </View>
   );
 }

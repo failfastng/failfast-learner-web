@@ -44,15 +44,12 @@ export default function ColdOpenStart() {
     if (selectedSubject && !pulseStarted.current) {
       pulseStarted.current = true;
       pulseScale.value = withRepeat(
-        withSequence(
-          withTiming(0.92, { duration: 700 }),
-          withTiming(1, { duration: 700 }),
-        ),
+        withSequence(withTiming(0.92, { duration: 700 }), withTiming(1, { duration: 700 })),
         3,
-        false
+        false,
       );
     }
-  }, [selectedSubject]);
+  }, [selectedSubject]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleStart() {
     if (!selectedSubject) return;
@@ -65,10 +62,7 @@ export default function ColdOpenStart() {
   }
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="handled"
-    >
+    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       {/* Wordmark */}
       <Text style={styles.wordmark}>FailFast</Text>
 
@@ -110,10 +104,7 @@ export default function ColdOpenStart() {
       {/* Start Practice button */}
       <Animated.View style={[{ opacity: selectedSubject ? 1 : 0.4 }, pulseStyle]}>
         <TouchableOpacity
-          style={[
-            styles.startButton,
-            !selectedSubject && styles.startButtonDisabled,
-          ]}
+          style={[styles.startButton, !selectedSubject && styles.startButtonDisabled]}
           onPress={handleStart}
           disabled={!selectedSubject}
           accessibilityRole="button"
@@ -190,6 +181,7 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     backgroundColor: colors.surface,
     outlineStyle: 'none',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any,
   cardsSection: {
     width: '100%',

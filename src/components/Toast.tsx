@@ -17,7 +17,7 @@ export function Toast({ message, action, durationMs = 3000 }: Props) {
       Animated.delay(durationMs),
       Animated.timing(opacity, { toValue: 0, duration: 300, useNativeDriver: true }),
     ]).start(() => setVisible(false));
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!visible) return null;
 

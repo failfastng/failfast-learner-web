@@ -21,7 +21,7 @@
  */
 
 import React, { useEffect, useRef } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { GestureResponderEvent, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { useProgressStore } from '../../hooks/useProgressStore';
@@ -81,18 +81,15 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
   // ── Capture waitlisted-at state once at mount ─────────────────────────────
   useEffect(() => {
     sessionStartWaitlistedAtRef.current = getWaitlistedAt();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   // ── Analytics: fire postSessionEnd when phase transitions to summary ──────
   useEffect(() => {
     if (state.phase !== 'summary') return;
-    hashDisplayName(getDisplayName()).then(hash => {
-      postSessionEnd(buildSessionEndPayload(
-        state,
-        subject,
-        hash,
-        sessionStartWaitlistedAtRef.current,
-      ));
+    hashDisplayName(getDisplayName()).then((hash) => {
+      postSessionEnd(
+        buildSessionEndPayload(state, subject, hash, sessionStartWaitlistedAtRef.current),
+      );
     });
   }, [state.phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -127,7 +124,7 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
     if (state.lastResolution === 'failed-through') {
       gritFloatRef.current?.fire(lastTapPosition.current, '+25 Grit Points');
     }
-  }, [state.lastResolution]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [state.lastResolution]);
 
   // ── markQuestionSeen: fires on any resolution (correct OR failed-through) ─
   // Per Story 2.8: abandoned questions are NOT marked seen.
@@ -173,9 +170,7 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
   }
 
   // ── Scored points for correct-answer FeedbackCopy ─────────────────────────
-  const { success: earnedSuccess, grit: earnedGrit } = scoreBranch(
-    state.tappedWrongIndices.length
-  );
+  const { success: earnedSuccess, grit: earnedGrit } = scoreBranch(state.tappedWrongIndices.length);
   const earnedPoints = earnedSuccess + earnedGrit;
 
   // ── FeedbackCopy attempt value ────────────────────────────────────────────
@@ -193,7 +188,7 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
   }
 
   // ── Tap handler ──────────────────────────────────────────────────────────
-  const handleOptionTap = (optionIndex: number, event?: { nativeEvent?: { pageX?: number; pageY?: number } }) => {
+  const handleOptionTap = (optionIndex: number, event?: GestureResponderEvent) => {
     if (state.lastResolution !== 'pending') return;
     if (state.tappedWrongIndices.includes(optionIndex)) return;
 
@@ -220,8 +215,7 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
   };
 
   const handleConfirmEnd = () => {
-    const noInteraction =
-      state.outcomes.length === 0 && state.tappedWrongIndices.length === 0;
+    const noInteraction = state.outcomes.length === 0 && state.tappedWrongIndices.length === 0;
     dispatch({ type: 'CLOSE_END_CONFIRM' });
     if (noInteraction) {
       // Zero-interaction: no summary phase, no analytics POST.
@@ -237,7 +231,6 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
   return (
     <View style={styles.wrapper}>
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-
         {/* PointsHeader — animated counters, attempt counter, level-up bar */}
         <PointsHeader
           sessionSuccess={state.sessionSuccess}
@@ -246,7 +239,9 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
           currentAttempt={state.currentAttempt}
           lastResolution={state.lastResolution}
           subject={subject}
-          cumulativeSuccess={(preSessionSnapshotRef.current?.successPoints ?? 0) + state.sessionSuccess}
+          cumulativeSuccess={
+            (preSessionSnapshotRef.current?.successPoints ?? 0) + state.sessionSuccess
+          }
         />
 
         {/* Session progress bar — 10 segments */}
@@ -286,9 +281,7 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
 
             // When revealed, disable all; when tappedWrong, disable that card
             const isDisabled =
-              isTappedWrong ||
-              state.lastResolution !== 'pending' ||
-              state.optionRevealed;
+              isTappedWrong || state.lastResolution !== 'pending' || state.optionRevealed;
 
             return (
               <OptionCard
@@ -347,9 +340,7 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
                   accessibilityLabel={locked.sessionEndKeepGoing}
                   accessibilityRole="button"
                 >
-                  <Text style={styles.modalButtonPrimaryText}>
-                    {locked.sessionEndKeepGoing}
-                  </Text>
+                  <Text style={styles.modalButtonPrimaryText}>{locked.sessionEndKeepGoing}</Text>
                 </Pressable>
                 <Pressable
                   style={[styles.modalButton, styles.modalButtonSecondary]}
@@ -357,9 +348,7 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
                   accessibilityLabel={locked.sessionEndConfirm}
                   accessibilityRole="button"
                 >
-                  <Text style={styles.modalButtonSecondaryText}>
-                    {locked.sessionEndConfirm}
-                  </Text>
+                  <Text style={styles.modalButtonSecondaryText}>{locked.sessionEndConfirm}</Text>
                 </Pressable>
               </View>
             </View>

@@ -76,17 +76,9 @@ export default function SubjectCard(props: SubjectCardProps) {
         {/* Tier badge — with-progress variant only */}
         {props.variant === 'with-progress' && (
           <View
-            style={[
-              styles.tierBadge,
-              props.tier === 'Skilled' && { backgroundColor: accentColor },
-            ]}
+            style={[styles.tierBadge, props.tier === 'Skilled' && { backgroundColor: accentColor }]}
           >
-            <Text
-              style={[
-                styles.tierText,
-                props.tier === 'Skilled' && { color: '#FFFFFF' },
-              ]}
-            >
+            <Text style={[styles.tierText, props.tier === 'Skilled' && { color: '#FFFFFF' }]}>
               {props.tier}
             </Text>
           </View>
@@ -110,7 +102,7 @@ export default function SubjectCard(props: SubjectCardProps) {
                 backgroundColor: accentColor,
                 width: `${Math.min(
                   100,
-                  (props.successPoints / SKILLED_THRESHOLD) * 100
+                  (props.successPoints / SKILLED_THRESHOLD) * 100,
                 )}%` as unknown as number,
               },
             ]}

@@ -10,27 +10,18 @@ export default function Root({ children }: PropsWithChildren) {
       <head>
         <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, shrink-to-fit=no"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <ScrollViewStyleReset />
 
         <title>FailFast Learner</title>
-        <meta
-          name="description"
-          content="Practice that counts the effort, not just the answer."
-        />
+        <meta name="description" content="Practice that counts the effort, not just the answer." />
 
         <meta property="og:title" content="FailFast Learner" />
         <meta
           property="og:description"
           content="Practice that counts the effort, not just the answer."
         />
-        <meta
-          property="og:image"
-          content="https://learner.failfastng.com/og-placeholder.png"
-        />
+        <meta property="og:image" content="https://learner.failfastng.com/og-placeholder.png" />
         <meta property="og:url" content="https://learner.failfastng.com" />
         <meta property="og:type" content="website" />
 
@@ -40,10 +31,7 @@ export default function Root({ children }: PropsWithChildren) {
           name="twitter:description"
           content="Practice that counts the effort, not just the answer."
         />
-        <meta
-          name="twitter:image"
-          content="https://learner.failfastng.com/og-placeholder.png"
-        />
+        <meta name="twitter:image" content="https://learner.failfastng.com/og-placeholder.png" />
 
         <link rel="icon" href="/favicon.png" />
       </head>

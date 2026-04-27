@@ -21,8 +21,15 @@ type Props = {
 };
 
 export function WaitlistSection({ variant, alreadyWaitlisted = false, onWaitlisted }: Props) {
-  const { submit, isSubmitting, justSubmitted, networkError, retryLast, emailError, onBlurValidate } =
-    useWaitlist(onWaitlisted);
+  const {
+    submit,
+    isSubmitting,
+    justSubmitted,
+    networkError,
+    retryLast,
+    emailError,
+    onBlurValidate,
+  } = useWaitlist(onWaitlisted);
   const [email, setEmail] = useState('');
   const [showCopiedToast, setShowCopiedToast] = useState(false);
 
@@ -57,9 +64,7 @@ export function WaitlistSection({ variant, alreadyWaitlisted = false, onWaitlist
   return (
     <View style={styles.container}>
       {/* Header — suppressed in ALL_SKILLED (mission paragraph takes its place) */}
-      {variant === 'standard' && (
-        <Text style={styles.header}>{locked.waitlistHeader}</Text>
-      )}
+      {variant === 'standard' && <Text style={styles.header}>{locked.waitlistHeader}</Text>}
 
       {/* Email input */}
       <TextInput

@@ -38,7 +38,7 @@ export function postSessionEnd(payload: SessionEndPayload): void {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
-  }).catch(err => console.warn('[analytics] sessions POST failed', err));
+  }).catch((err) => console.warn('[analytics] sessions POST failed', err));
 }
 
 export function postResetEvent(session_uuid: string): void {
@@ -46,7 +46,7 @@ export function postResetEvent(session_uuid: string): void {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ session_uuid }),
-  }).catch(err => console.warn('[analytics] reset POST failed', err));
+  }).catch((err) => console.warn('[analytics] reset POST failed', err));
 }
 
 // ── Build payload ─────────────────────────────────────────────────────────────
@@ -58,7 +58,7 @@ export function buildSessionEndPayload(
   sessionStartWaitlistedAt: string | null,
 ): SessionEndPayload {
   const endedAt = new Date().toISOString();
-  const questionsAnswered = state.outcomes.filter(o => o !== 'abandoned').length;
+  const questionsAnswered = state.outcomes.filter((o) => o !== 'abandoned').length;
   const completedWaitlistSignup = getWaitlistedAt() !== null && sessionStartWaitlistedAt === null;
 
   const outcomes: QuestionOutcomePayload[] = state.outcomes.map((outcome, i) => {
@@ -66,11 +66,17 @@ export function buildSessionEndPayload(
     let success_points_earned = 0;
     let grit_points_earned = 0;
     if (outcome === 'first_try_correct') {
-      const s = scoreBranch(0); success_points_earned = s.success; grit_points_earned = s.grit;
+      const s = scoreBranch(0);
+      success_points_earned = s.success;
+      grit_points_earned = s.grit;
     } else if (outcome === 'second_try_correct') {
-      const s = scoreBranch(1); success_points_earned = s.success; grit_points_earned = s.grit;
+      const s = scoreBranch(1);
+      success_points_earned = s.success;
+      grit_points_earned = s.grit;
     } else if (outcome === 'third_try_correct') {
-      const s = scoreBranch(2); success_points_earned = s.success; grit_points_earned = s.grit;
+      const s = scoreBranch(2);
+      success_points_earned = s.success;
+      grit_points_earned = s.grit;
     } else if (outcome === 'failed_through') {
       grit_points_earned = 25;
     }

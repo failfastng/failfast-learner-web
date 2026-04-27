@@ -13,12 +13,14 @@
  */
 
 import React, { useEffect } from 'react';
-import { AccessibilityState, Pressable, StyleSheet, Text } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import {
+  AccessibilityState,
+  GestureResponderEvent,
+  Pressable,
+  StyleSheet,
+  Text,
+} from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 type Props = {
@@ -26,7 +28,7 @@ type Props = {
   isTappedWrong?: boolean;
   isRevealed?: boolean;
   isCorrect?: boolean;
-  onPress?: () => void;
+  onPress?: (event: GestureResponderEvent) => void;
   accessibilityLabel?: string;
 };
 

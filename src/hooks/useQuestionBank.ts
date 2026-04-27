@@ -33,8 +33,7 @@ export function useQuestionBank(): BankState {
     didInitRef.current = true;
 
     const cached = getQuestionCache();
-    const cacheValid =
-      cached !== null && Date.now() - cached.fetchedAt < CACHE_TTL_MS;
+    const cacheValid = cached !== null && Date.now() - cached.fetchedAt < CACHE_TTL_MS;
 
     if (cacheValid && cached) {
       // Serve immediately from cache

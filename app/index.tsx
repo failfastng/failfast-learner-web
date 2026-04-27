@@ -11,7 +11,9 @@ export default function StartRoute() {
   const [hydrated, setHydrated] = useState(false);
   const { hasAnyProgress } = useProgressStore();
 
-  useEffect(() => { setHydrated(true); }, []);
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
 
   if (!hydrated) return <ColdOpenStart />;
   return hasAnyProgress() ? <ReturningStart /> : <ColdOpenStart />;

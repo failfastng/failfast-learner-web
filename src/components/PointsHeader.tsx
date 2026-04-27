@@ -18,11 +18,7 @@
 
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Animated, {
-  useAnimatedProps,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
 import { motion } from '../theme/motion';
 import { LevelUpBar } from './LevelUpBar';
 import type { Subject } from '../types/domain';
@@ -37,7 +33,7 @@ import type { Subject } from '../types/domain';
 type Props = {
   sessionSuccess: number;
   sessionGrit: number;
-  tappedWrongCount: number;   // state.tappedWrongIndices.length
+  tappedWrongCount: number; // state.tappedWrongIndices.length
   currentAttempt: 1 | 2 | 3;
   lastResolution: 'pending' | 'correct' | 'failed-through';
   subject: Subject;

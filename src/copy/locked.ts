@@ -18,8 +18,7 @@ export const locked = {
   subjectSubLabelEnglish: 'Comprehension, grammar, vocabulary',
   subjectSubLabelEconomics: 'Micro, macro, trade',
   startButton: 'Start Practice',
-  footerLine:
-    'A preview of FailFast. Full platform launching soon — failfastng.com',
+  footerLine: 'A preview of FailFast. Full platform launching soon — failfastng.com',
   resetLink: 'Reset progress',
 
   // ── Reset modal ───────────────────────────────────────────────────────────
@@ -86,8 +85,7 @@ export const locked = {
   // ── Waitlist ──────────────────────────────────────────────────────────────
   waitlistHeader: 'Want the full experience?',
   waitlistButton: 'Join the waitlist',
-  waitlistDisclosure:
-    "We'll email you when the full FailFast platform launches. No spam.",
+  waitlistDisclosure: "We'll email you when the full FailFast platform launches. No spam.",
   // [Name] → getDisplayName()
   waitlistThankYou:
     "Thanks, [Name]. You're on the list. We'll email you when the full platform launches.",
