@@ -19,6 +19,8 @@ import { useRouter } from 'expo-router';
 import { getProgress, getWaitlistedAt } from '../../lib/storage';
 import { WaitlistSection } from '../../components/WaitlistSection';
 import { getDisplayName } from '../../lib/displayName';
+import { hashDisplayName } from '../../lib/hash';
+import { buildSessionEndPayload, postSessionEnd } from '../../lib/analytics';
 import { selectSummaryVariant, countCorrections, countWalkThroughs } from '../../lib/summary';
 import { shareApp } from '../../lib/share';
 import { locked } from '../../copy/locked';
@@ -139,6 +141,15 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
   const [resetModalOpen, setResetModalOpen] = useState(false);
   const [waitlistedAt, setWaitlistedAtState] = useState<string | null>(() => getWaitlistedAt());
   const [showCopiedToast, setShowCopiedToast] = useState(false);
+
+  // Fire session analytics exactly once when summary mounts
+  useEffect(() => {
+    const sessionStartWaitlistedAt = getWaitlistedAt();
+    hashDisplayName(getDisplayName()).then(hash => {
+      const payload = buildSessionEndPayload(state, subject, hash, sessionStartWaitlistedAt);
+      postSessionEnd(payload);
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Compute variant ────────────────────────────────────────────────────────
   const allProgress = getProgress();
