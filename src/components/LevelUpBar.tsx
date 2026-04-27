@@ -42,16 +42,13 @@ export function LevelUpBar({ subject, successPoints }: Props) {
   }, [fillPercent]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const colors = subjectColors[subject];
-  const leftLabel = isSkilled
-    ? `${subjectLabel(subject)}: Skilled`
-    : `${subjectLabel(subject)}: Rookie`;
 
   return (
     <View style={styles.container}>
       {/* Labels */}
       <View style={styles.labelRow}>
-        <Text style={styles.leftLabel}>{leftLabel}</Text>
-        <Text style={styles.rightLabel}>Skilled</Text>
+        <Text style={styles.leftLabel}>{`${subjectLabel(subject)}: Rookie`}</Text>
+        <Text style={[styles.rightLabel, isSkilled && { color: colors.primary }]}>Skilled</Text>
       </View>
 
       {/* Bar track */}
