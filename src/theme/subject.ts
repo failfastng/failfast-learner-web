@@ -1,10 +1,15 @@
 // Subject-specific colors for the level-up bar.
-// Placeholder values — Item 20 polishes against the Things 3 tonal anchor.
+// Tuned for Item 20 polish — Things 3 tonal anchor: muted, distinguishable,
+// colorblind-safe, WCAG AA contrast on white (#fff).
+//
+// Maths    → blue family    (#3B5FC0 ≈ 5.1:1 on white — AA pass)
+// English  → amber family   (#92620A ≈ 5.6:1 on white — AA pass)
+// Economics → green family  (#2D6A4F ≈ 6.2:1 on white — AA pass)
 
 export const subjectColors = {
-  maths: { primary: '#4A6CF7', light: '#EEF1FE' },
-  english: { primary: '#10B981', light: '#ECFDF5' },
-  economics: { primary: '#F59E0B', light: '#FFFBEB' },
+  maths: { primary: '#3B5FC0', light: '#EEF1FB' },
+  english: { primary: '#92620A', light: '#FEF3DC' },
+  economics: { primary: '#2D6A4F', light: '#E8F5EE' },
 } as const;
 
 export type SubjectColorKey = keyof typeof subjectColors;

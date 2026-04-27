@@ -29,6 +29,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     favicon: './assets/favicon.png',
     bundler: 'metro',
     output: 'static',
+    manifest: {
+      name: 'FailFast Learner',
+      short_name: 'FailFast',
+      theme_color: '#111111',
+      background_color: '#ffffff',
+    },
     meta: {
       title: 'FailFast Learner',
       description: 'Practice that counts the effort, not just the answer.',

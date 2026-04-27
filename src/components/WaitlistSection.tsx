@@ -53,6 +53,7 @@ export function WaitlistSection({ variant, alreadyWaitlisted = false, onWaitlist
             if (result === 'copied') setShowCopiedToast(true);
           }}
           accessibilityRole="button"
+          accessibilityLabel={locked.waitlistShareButton}
         >
           <Text style={styles.shareBtnText}>{locked.waitlistShareButton}</Text>
         </Pressable>

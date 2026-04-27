@@ -67,6 +67,16 @@ export function OptionCard({
 
   const accessibilityStateObj: AccessibilityState = { disabled: isDisabled };
 
+  // Convey resolution state to screen readers after the question is resolved
+  const resolvedSuffix = isRevealedCorrect
+    ? ', correct answer'
+    : isTappedWrong
+      ? ', incorrect'
+      : isRevealed && !isCorrect
+        ? ', incorrect'
+        : '';
+  const resolvedLabel = (accessibilityLabel ?? text) + resolvedSuffix;
+
   return (
     <AnimatedPressable
       style={[
@@ -77,7 +87,7 @@ export function OptionCard({
       ]}
       onPress={isDisabled ? undefined : onPress}
       disabled={isDisabled}
-      accessibilityLabel={accessibilityLabel ?? text}
+      accessibilityLabel={resolvedLabel}
       accessibilityRole="button"
       accessibilityState={accessibilityStateObj}
     >

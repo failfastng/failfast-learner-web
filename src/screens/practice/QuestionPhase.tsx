@@ -164,7 +164,7 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
   if (!currentQuestion) {
     return (
       <View style={styles.centered}>
-        <Text>Loading question...</Text>
+        <Text>{locked.loadingQuestion}</Text>
       </View>
     );
   }

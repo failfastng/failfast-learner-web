@@ -288,7 +288,11 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
       // "Try a different subject" | "Share this app" | "Start over" | "Back to start"
       return (
         <View style={styles.tertiaryRow}>
-          <Pressable onPress={() => router.replace('/')} accessibilityRole="link">
+          <Pressable
+            onPress={() => router.replace('/')}
+            accessibilityRole="link"
+            accessibilityLabel={locked.tryDifferentSubjectLink}
+          >
             <Text style={styles.tertiaryLink}>{locked.tryDifferentSubjectLink}</Text>
           </Pressable>
           <Pressable
@@ -297,13 +301,22 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
               if (result === 'copied') setShowCopiedToast(true);
             }}
             accessibilityRole="button"
+            accessibilityLabel={locked.shareAppLink}
           >
             <Text style={styles.tertiaryLink}>{locked.shareAppLink}</Text>
           </Pressable>
-          <Pressable onPress={() => setResetModalOpen(true)} accessibilityRole="button">
+          <Pressable
+            onPress={() => setResetModalOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel={locked.startOverLink}
+          >
             <Text style={styles.tertiaryLink}>{locked.startOverLink}</Text>
           </Pressable>
-          <Pressable onPress={() => router.replace('/')} accessibilityRole="link">
+          <Pressable
+            onPress={() => router.replace('/')}
+            accessibilityRole="link"
+            accessibilityLabel={locked.backToStartLink}
+          >
             <Text style={styles.tertiaryLink}>{locked.backToStartLink}</Text>
           </Pressable>
         </View>
@@ -314,13 +327,25 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
       // "Try a different subject" | "Start over" | "Back to start"
       return (
         <View style={styles.tertiaryRow}>
-          <Pressable onPress={() => router.replace('/')} accessibilityRole="link">
+          <Pressable
+            onPress={() => router.replace('/')}
+            accessibilityRole="link"
+            accessibilityLabel={locked.tryDifferentSubjectLink}
+          >
             <Text style={styles.tertiaryLink}>{locked.tryDifferentSubjectLink}</Text>
           </Pressable>
-          <Pressable onPress={() => setResetModalOpen(true)} accessibilityRole="button">
+          <Pressable
+            onPress={() => setResetModalOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel={locked.startOverLink}
+          >
             <Text style={styles.tertiaryLink}>{locked.startOverLink}</Text>
           </Pressable>
-          <Pressable onPress={() => router.replace('/')} accessibilityRole="link">
+          <Pressable
+            onPress={() => router.replace('/')}
+            accessibilityRole="link"
+            accessibilityLabel={locked.backToStartLink}
+          >
             <Text style={styles.tertiaryLink}>{locked.backToStartLink}</Text>
           </Pressable>
         </View>
@@ -336,13 +361,22 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
             if (result === 'copied') setShowCopiedToast(true);
           }}
           accessibilityRole="button"
+          accessibilityLabel={locked.shareAppLink}
         >
           <Text style={styles.tertiaryLink}>{locked.shareAppLink}</Text>
         </Pressable>
-        <Pressable onPress={() => router.replace('/')} accessibilityRole="link">
+        <Pressable
+          onPress={() => router.replace('/')}
+          accessibilityRole="link"
+          accessibilityLabel={locked.tryDifferentSubjectLink}
+        >
           <Text style={styles.tertiaryLink}>{locked.tryDifferentSubjectLink}</Text>
         </Pressable>
-        <Pressable onPress={() => router.replace('/')} accessibilityRole="link">
+        <Pressable
+          onPress={() => router.replace('/')}
+          accessibilityRole="link"
+          accessibilityLabel={locked.backToStartLink}
+        >
           <Text style={styles.tertiaryLink}>{locked.backToStartLink}</Text>
         </Pressable>
       </View>

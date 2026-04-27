@@ -103,4 +103,5 @@ export const locked = {
 
   // ── Misc ──────────────────────────────────────────────────────────────────
   learnerFallback: 'Learner',
+  loadingQuestion: 'Loading question...',
 } as const;
