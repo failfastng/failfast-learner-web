@@ -76,15 +76,13 @@ describe('selectSummaryVariant', () => {
     if (result.variant === 'STRUGGLE') expect(result.perfectTotal).toBe(140);
   });
 
-  // 7. Abandoned-question adjustment
-  test('abandoned: questionsAnswered=9, abandonedCount=1 → STRUGGLE perfectTotal=180', () => {
-    const outcomes = [...Array(9).fill('first_try_correct'), 'abandoned'];
+  // 7. Partial-perfect falls to RECOVERY (not PERFECT) — PERFECT requires 10Q
+  test('partial session all-first-try: questionsAnswered=1 → RECOVERY not PERFECT', () => {
     const result = selectSummaryVariant(
-      { questionsAnswered: 9, abandonedCount: 1, success: 135, grit: 45, total: 180, outcomes },
+      { questionsAnswered: 1, abandonedCount: 0, success: 15, grit: 5, total: 20, outcomes: ['first_try_correct'] },
       ROOKIE_ALL, null, ZERO_PROGRESS
     );
-    // 9 answered * 20 = 180; success=135, grit=45 → PERFECT
-    expect(result.variant).toBe('PERFECT');
+    expect(result.variant).toBe('RECOVERY');
   });
 
   // 8. ALL_SKILLED supersedes PERFECT

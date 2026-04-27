@@ -91,7 +91,7 @@ export function PointsHeader({
   return (
     <View style={styles.container} accessibilityRole="header">
       {/* Total — hero number */}
-      <Animated.View style={totalAnimStyle}>
+      <Animated.View style={[styles.totalBlock, totalAnimStyle]}>
         <Text style={styles.totalLabel}>Total Points</Text>
         <Text style={styles.totalValue}>{total}</Text>
       </Animated.View>
@@ -127,6 +127,9 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: 8,
     paddingVertical: 4,
+  },
+  totalBlock: {
+    alignSelf: 'flex-start',
   },
   totalLabel: {
     fontSize: 11,

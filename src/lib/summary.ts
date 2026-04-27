@@ -40,14 +40,18 @@ export function selectSummaryVariant(
   const perfectSuccess = stats.questionsAnswered * 15;
   const perfectGrit = stats.questionsAnswered * 5;
 
-  if (stats.success === perfectSuccess && stats.grit === perfectGrit) {
-    // Recommended subject: lowest cumulative Success, Economics as tiebreaker
+  if (stats.questionsAnswered === 10 && stats.success === perfectSuccess && stats.grit === perfectGrit) {
+    // Recommended subject: lowest cumulative Success, Economics as tiebreaker.
+    // Iterate economics-first so it wins on equal successPoints (strict < means
+    // equal values never displace the incumbent).
     const subjects: Subject[] = ['maths', 'english', 'economics'];
     const nonSkilled = subjects.filter(s => tierState[s] !== 'Skilled');
     const pool = nonSkilled.length > 0 ? nonSkilled : subjects;
+    const preferenceOrder: Subject[] = ['economics', 'english', 'maths'];
     let recommended: Subject = 'economics';
     let minSuccess = Infinity;
-    for (const s of pool) {
+    for (const s of preferenceOrder) {
+      if (!pool.includes(s)) continue;
       const sp = allProgress[s].successPoints;
       if (sp < minSuccess) { minSuccess = sp; recommended = s; }
     }

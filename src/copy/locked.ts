@@ -63,8 +63,10 @@ export const locked = {
     'Every question, first try. That is not luck, that is knowledge you already have.\nYour Success Points outpaced your Grit Points by 3 to 1. That is mastery.\n\nNow try [Subject]. Unfamiliar ground is where the fail-forward mechanic actually pays off. See how it feels to earn points for getting it wrong.',
   recoveryBody:
     'You corrected yourself [N] times.\nA user who got every question right on the first try would have scored [perfectTotal].\nYou scored the same [perfectTotal]. Every mistake you made was fully recovered.\nThat is the fail-forward system working exactly as designed.',
-  struggleBody:
+  struggleBodyGritLed:
     'You corrected yourself [N] times. You walked through every option on [M] questions.\nA user who got every question right on the first try would have scored [perfectTotal].\nYou scored [X]. Your Grit outweighed your Success.\nThe struggle itself is what put you past [perfectTotal].',
+  struggleBodySuccessLed:
+    'You corrected yourself [N] times. You walked through every option on [M] questions.\nA user who got every question right on the first try would have scored [perfectTotal].\nYou scored [X]. The struggle itself is what put you past [perfectTotal].',
   allSkilledMilestoneBody:
     'You have now taken every subject to Skilled. That is the whole preview.\nA preview is what it is — a small slice of one idea, played through to its edges. You are at the edge.\n\nYou have seen what the preview can do. The full platform is next.',
   allSkilledMilestoneBodyShort:

@@ -186,7 +186,10 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
     }
 
     if (variantRender.variant === 'STRUGGLE') {
-      const body = locked.struggleBody
+      const template = state.sessionGrit > state.sessionSuccess
+        ? locked.struggleBodyGritLed
+        : locked.struggleBodySuccessLed;
+      const body = template
         .replace(/\[N\]/g, String(variantRender.corrections))
         .replace(/\[M\]/g, String(variantRender.walkThroughs))
         .replace(/\[perfectTotal\]/g, String(variantRender.perfectTotal))
