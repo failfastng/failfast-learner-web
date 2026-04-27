@@ -22,6 +22,7 @@ import { getDisplayName } from '../../lib/displayName';
 import { selectSummaryVariant, countCorrections, countWalkThroughs } from '../../lib/summary';
 import { shareApp } from '../../lib/share';
 import { locked } from '../../copy/locked';
+import { Toast } from '../../components/Toast';
 import type { Action } from '../../hooks/useSessionReducer';
 import type { SessionState, Subject } from '../../types/domain';
 import ResetConfirmModal from '../../components/ResetConfirmModal';
@@ -137,6 +138,7 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
   const router = useRouter();
   const [resetModalOpen, setResetModalOpen] = useState(false);
   const [waitlistedAt, setWaitlistedAtState] = useState<string | null>(() => getWaitlistedAt());
+  const [showCopiedToast, setShowCopiedToast] = useState(false);
 
   // ── Compute variant ────────────────────────────────────────────────────────
   const allProgress = getProgress();
@@ -275,7 +277,13 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
           <Pressable onPress={() => router.replace('/')} accessibilityRole="link">
             <Text style={styles.tertiaryLink}>{locked.tryDifferentSubjectLink}</Text>
           </Pressable>
-          <Pressable onPress={() => shareApp()} accessibilityRole="button">
+          <Pressable
+            onPress={async () => {
+              const result = await shareApp();
+              if (result === 'copied') setShowCopiedToast(true);
+            }}
+            accessibilityRole="button"
+          >
             <Text style={styles.tertiaryLink}>{locked.shareAppLink}</Text>
           </Pressable>
           <Pressable onPress={() => setResetModalOpen(true)} accessibilityRole="button">
@@ -308,7 +316,13 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
     // Standard variants: "Share this app" | "Try a different subject" | "Back to start"
     return (
       <View style={styles.tertiaryRow}>
-        <Pressable onPress={() => shareApp()} accessibilityRole="button">
+        <Pressable
+          onPress={async () => {
+            const result = await shareApp();
+            if (result === 'copied') setShowCopiedToast(true);
+          }}
+          accessibilityRole="button"
+        >
           <Text style={styles.tertiaryLink}>{locked.shareAppLink}</Text>
         </Pressable>
         <Pressable onPress={() => router.replace('/')} accessibilityRole="link">
@@ -326,54 +340,68 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
   const allSkilledState1 = isAllSkilled && variantRender.renderState === 1;
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <View style={styles.outerContainer}>
+      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
 
-      {/* MathBlock — always shown */}
-      <MathBlock state={state} />
+        {/* MathBlock — always shown */}
+        <MathBlock state={state} />
 
-      {/* VariantBody */}
-      <VariantBody />
+        {/* VariantBody */}
+        <VariantBody />
 
-      {/*
-        ALL_SKILLED state 1: WaitlistSection is primary CTA, rendered ABOVE VisualBreak.
-        Standard variants: WaitlistSection rendered BELOW VisualBreak.
-        ALL_SKILLED state 3: WaitlistSection not rendered.
-      */}
-      {allSkilledState1 && (
-        <WaitlistSection
-          variant="all_skilled"
-          alreadyWaitlisted={false}
-          onWaitlisted={() => setWaitlistedAtState(getWaitlistedAt())}
+        {/*
+          ALL_SKILLED state 1: WaitlistSection is primary CTA, rendered ABOVE VisualBreak.
+          Standard variants: WaitlistSection rendered BELOW VisualBreak.
+          ALL_SKILLED state 3: WaitlistSection not rendered.
+        */}
+        {allSkilledState1 && (
+          <WaitlistSection
+            variant="all_skilled"
+            alreadyWaitlisted={false}
+            onWaitlisted={() => setWaitlistedAtState(getWaitlistedAt())}
+          />
+        )}
+
+        <VisualBreak />
+
+        {!isAllSkilled && (
+          <WaitlistSection
+            variant="standard"
+            alreadyWaitlisted={waitlistedAt !== null}
+            onWaitlisted={() => setWaitlistedAtState(getWaitlistedAt())}
+          />
+        )}
+
+        {/* PrimaryCTA */}
+        <PrimaryCTA />
+
+        {/* TertiaryRow */}
+        <TertiaryRow />
+
+        {/* Reset Confirm Modal */}
+        <ResetConfirmModal
+          visible={resetModalOpen}
+          onClose={() => setResetModalOpen(false)}
+        />
+      </ScrollView>
+
+      {/* Copied toast — absolute overlay */}
+      {showCopiedToast && (
+        <Toast
+          message={locked.toastCopied}
+          durationMs={2500}
         />
       )}
-
-      <VisualBreak />
-
-      {!isAllSkilled && (
-        <WaitlistSection
-          variant="standard"
-          alreadyWaitlisted={waitlistedAt !== null}
-          onWaitlisted={() => setWaitlistedAtState(getWaitlistedAt())}
-        />
-      )}
-
-      {/* PrimaryCTA */}
-      <PrimaryCTA />
-
-      {/* TertiaryRow */}
-      <TertiaryRow />
-
-      {/* Reset Confirm Modal */}
-      <ResetConfirmModal
-        visible={resetModalOpen}
-        onClose={() => setResetModalOpen(false)}
-      />
-    </ScrollView>
+    </View>
   );
 }
 
 // ── Styles ────────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
+  outerContainer: {
+    flex: 1,
+    position: 'relative',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',

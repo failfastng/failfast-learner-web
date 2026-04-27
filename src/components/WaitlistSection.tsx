@@ -12,6 +12,7 @@ import { locked } from '../copy/locked';
 import { getDisplayName } from '../lib/displayName';
 import { shareApp } from '../lib/share';
 import { useWaitlist } from '../hooks/useWaitlist';
+import { Toast } from './Toast';
 
 type Props = {
   variant: 'standard' | 'all_skilled';
@@ -23,6 +24,7 @@ export function WaitlistSection({ variant, alreadyWaitlisted = false, onWaitlist
   const { submit, isSubmitting, justSubmitted, networkError, retryLast, emailError, onBlurValidate } =
     useWaitlist(onWaitlisted);
   const [email, setEmail] = useState('');
+  const [showCopiedToast, setShowCopiedToast] = useState(false);
 
   const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const name = getDisplayName() || locked.learnerFallback;
@@ -39,11 +41,15 @@ export function WaitlistSection({ variant, alreadyWaitlisted = false, onWaitlist
         <Text style={styles.thankYouText}>{thankYouText}</Text>
         <Pressable
           style={styles.shareBtn}
-          onPress={() => shareApp()}
+          onPress={async () => {
+            const result = await shareApp();
+            if (result === 'copied') setShowCopiedToast(true);
+          }}
           accessibilityRole="button"
         >
           <Text style={styles.shareBtnText}>{locked.waitlistShareButton}</Text>
         </Pressable>
+        {showCopiedToast && <Toast message={locked.toastCopied} durationMs={2500} />}
       </View>
     );
   }
@@ -99,14 +105,12 @@ export function WaitlistSection({ variant, alreadyWaitlisted = false, onWaitlist
         </Text>
       </Text>
 
-      {/* Network error — inline retry (Toast is not yet implemented) */}
+      {/* Network error — Toast with retry action */}
       {networkError ? (
-        <View style={styles.errorBanner}>
-          <Text style={styles.errorBannerText}>{locked.toastCouldNotReach}</Text>
-          <Pressable onPress={retryLast} accessibilityRole="button">
-            <Text style={styles.retryLink}>Retry</Text>
-          </Pressable>
-        </View>
+        <Toast
+          message={locked.toastCouldNotReach}
+          action={{ label: 'Retry', onPress: retryLast }}
+        />
       ) : null}
     </View>
   );
@@ -179,29 +183,6 @@ const styles = StyleSheet.create({
   shareBtnText: {
     fontSize: 14,
     color: '#166534',
-    textDecorationLine: 'underline',
-  },
-  errorBanner: {
-    marginTop: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    padding: 12,
-    backgroundColor: '#fff5f5',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#fed7d7',
-  },
-  errorBannerText: {
-    flex: 1,
-    fontSize: 13,
-    color: '#c53030',
-    lineHeight: 18,
-  },
-  retryLink: {
-    fontSize: 13,
-    color: '#c53030',
-    fontWeight: '600',
     textDecorationLine: 'underline',
   },
 });
