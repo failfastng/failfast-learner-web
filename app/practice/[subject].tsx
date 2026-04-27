@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 
 import { useQuestionBank } from '../../src/hooks/useQuestionBank';
@@ -17,6 +17,9 @@ function isValidSubject(s: unknown): s is Subject {
 }
 
 export default function PracticeRoute() {
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => { setHydrated(true); }, []);
+
   const { subject: rawSubject } = useLocalSearchParams<{ subject: string }>();
   const subject = isValidSubject(rawSubject) ? rawSubject : 'maths';
 
@@ -57,6 +60,15 @@ export default function PracticeRoute() {
       dispatch({ type: 'LOADED', queue });
     }
   }, [isReady, bank, subject, dispatch]);
+
+  // ── Pre-hydration: always match the static SSR shell ────────────────────
+  if (!hydrated) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   // ── Error state ─────────────────────────────────────────────────────────
   if (error) {
