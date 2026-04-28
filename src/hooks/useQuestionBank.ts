@@ -32,7 +32,16 @@ function shuffleOptions(q: Question): Question {
 }
 
 function shuffleBank(questions: Question[]): Question[] {
-  return questions.map(shuffleOptions);
+  let lastCorrectIndex = -1;
+  return questions.map((q) => {
+    let shuffled = shuffleOptions(q);
+    // Retry once if correct answer lands on same position as the previous question
+    if (shuffled.correct_index === lastCorrectIndex) {
+      shuffled = shuffleOptions(q);
+    }
+    lastCorrectIndex = shuffled.correct_index;
+    return shuffled;
+  });
 }
 
 export function useQuestionBank(): BankState {
