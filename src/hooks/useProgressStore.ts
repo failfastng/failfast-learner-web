@@ -22,6 +22,11 @@ function subscribe(listener: Listener): () => void {
   return () => listeners.delete(listener);
 }
 
+export function notifyProgressReset(): void {
+  snapshotCache = null;
+  listeners.forEach((l) => l());
+}
+
 function notify(): void {
   snapshotCache = null; // invalidate so next getSnapshot() reads fresh data
   listeners.forEach((l) => l());

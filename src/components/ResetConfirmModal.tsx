@@ -6,6 +6,7 @@ import { colors } from '../theme/colors';
 import { fontSize, fontWeight } from '../theme/type';
 import { postResetEvent } from '../lib/analytics';
 import { wipeForReset, getSessionId } from '../lib/storage';
+import { notifyProgressReset } from '../hooks/useProgressStore';
 
 interface Props {
   visible: boolean;
@@ -20,8 +21,9 @@ export default function ResetConfirmModal({ visible, onClose }: Props) {
     const sessionId = getSessionId();
     postResetEvent(sessionId);
 
-    // 2. Wipe localStorage and regenerate sessionId
+    // 2. Wipe localStorage, regenerate sessionId, invalidate in-memory store cache
     wipeForReset();
+    notifyProgressReset();
 
     // 3. Navigate to start (cold-open state since hasAnyProgress() = false)
     router.replace('/');
