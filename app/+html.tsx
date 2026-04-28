@@ -22,7 +22,10 @@ export default function Root({ children }: PropsWithChildren) {
           content="Practice that counts the effort, not just the answer."
         />
         <meta property="og:image" content="https://learner.failfastng.com/og-preview.png" />
-        <meta property="og:image:secure_url" content="https://learner.failfastng.com/og-preview.png" />
+        <meta
+          property="og:image:secure_url"
+          content="https://learner.failfastng.com/og-preview.png"
+        />
         <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
