@@ -288,7 +288,7 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
     const renderState = isAllSkilled ? variantRender.renderState : null;
 
     if (isAllSkilled && renderState === 1) {
-      // "Try a different subject" | "Share this app" | "Start over" | "Back to start"
+      // "Try a different subject" | "Share this app" | "Start over"
       return (
         <View style={styles.tertiaryRow}>
           <Pressable
@@ -315,19 +315,12 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
           >
             <Text style={styles.tertiaryLink}>{locked.startOverLink}</Text>
           </Pressable>
-          <Pressable
-            onPress={() => router.replace('/')}
-            accessibilityRole="link"
-            accessibilityLabel={locked.backToStartLink}
-          >
-            <Text style={styles.tertiaryLink}>{locked.backToStartLink}</Text>
-          </Pressable>
         </View>
       );
     }
 
     if (isAllSkilled && renderState === 3) {
-      // "Try a different subject" | "Start over" | "Back to start"
+      // "Try a different subject" | "Start over"
       return (
         <View style={styles.tertiaryRow}>
           <Pressable
@@ -344,18 +337,11 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
           >
             <Text style={styles.tertiaryLink}>{locked.startOverLink}</Text>
           </Pressable>
-          <Pressable
-            onPress={() => router.replace('/')}
-            accessibilityRole="link"
-            accessibilityLabel={locked.backToStartLink}
-          >
-            <Text style={styles.tertiaryLink}>{locked.backToStartLink}</Text>
-          </Pressable>
         </View>
       );
     }
 
-    // Standard variants: "Share this app" | "Try a different subject" | "Back to start"
+    // Standard variants: "Share this app" | "Try a different subject"
     return (
       <View style={styles.tertiaryRow}>
         <Pressable
@@ -374,13 +360,6 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
           accessibilityLabel={locked.tryDifferentSubjectLink}
         >
           <Text style={styles.tertiaryLink}>{locked.tryDifferentSubjectLink}</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => router.replace('/')}
-          accessibilityRole="link"
-          accessibilityLabel={locked.backToStartLink}
-        >
-          <Text style={styles.tertiaryLink}>{locked.backToStartLink}</Text>
         </Pressable>
       </View>
     );
