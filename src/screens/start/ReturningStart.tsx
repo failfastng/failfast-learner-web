@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import {
   View,
   Text,
@@ -17,6 +18,8 @@ import ResetConfirmModal from '../../components/ResetConfirmModal';
 import { useProgressStore } from '../../hooks/useProgressStore';
 import { getDisplayName } from '../../lib/displayName';
 import { saveDisplayName } from '../../lib/storage';
+import { shareApp } from '../../lib/share';
+import { Toast } from '../../components/Toast';
 import type { Subject } from '../../types/domain';
 
 const ALL_SUBJECTS: Subject[] = ['maths', 'english', 'economics'];
@@ -28,6 +31,7 @@ export default function ReturningStart() {
   const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
   const [nameInput, setNameInput] = useState(getDisplayName());
   const [resetModalVisible, setResetModalVisible] = useState(false);
+  const [showCopiedToast, setShowCopiedToast] = useState(false);
 
   function handleStart() {
     if (!selectedSubject) return;
@@ -36,7 +40,7 @@ export default function ReturningStart() {
   }
 
   return (
-    <>
+    <View style={styles.outerContainer}>
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
         {/* Reset progress link — top-right */}
         <View style={styles.topBar}>
@@ -112,15 +116,35 @@ export default function ReturningStart() {
             {locked.startButton}
           </Text>
         </TouchableOpacity>
+
+        {/* Share link */}
+        <TouchableOpacity
+          style={styles.shareLink}
+          onPress={async () => {
+            const result = await shareApp();
+            if (result === 'copied') setShowCopiedToast(true);
+          }}
+          accessibilityRole="button"
+          accessibilityLabel={locked.shareAppLink}
+        >
+          <Text style={styles.shareLinkText}>{locked.shareAppLink}</Text>
+        </TouchableOpacity>
       </ScrollView>
 
       {/* Reset confirm modal */}
       <ResetConfirmModal visible={resetModalVisible} onClose={() => setResetModalVisible(false)} />
-    </>
+
+      {/* Copied toast */}
+      {showCopiedToast && <Toast message={locked.toastCopied} durationMs={2500} />}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  outerContainer: {
+    flex: 1,
+    position: 'relative',
+  },
   container: {
     flexGrow: 1,
     alignItems: 'center',
@@ -198,5 +222,14 @@ const styles = StyleSheet.create({
   },
   startButtonTextDisabled: {
     // subtle de-emphasis already handled by parent opacity
+  },
+  shareLink: {
+    marginTop: 20,
+  },
+  shareLinkText: {
+    fontSize: fontSize.sm,
+    color: colors.textMuted,
+    textDecorationLine: 'underline',
+    textAlign: 'center',
   },
 });
