@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { setWaitlistedAt } from '../lib/storage';
+import { setWaitlistedAt, getSessionId } from '../lib/storage';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -23,7 +23,12 @@ export function useWaitlist(onSuccess?: () => void) {
       const res = await fetch(`${process.env.EXPO_PUBLIC_API_BASE}/waitlist`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, source: 'summary_screen', hp: '' }),
+        body: JSON.stringify({
+          email,
+          source: 'summary_screen',
+          session_uuid: getSessionId(),
+          hp: '',
+        }),
       });
       if (!res.ok && res.status !== 200) throw new Error(`status ${res.status}`);
       setWaitlistedAt(new Date().toISOString());
