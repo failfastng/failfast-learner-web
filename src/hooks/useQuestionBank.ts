@@ -18,6 +18,23 @@ async function fetchBank(): Promise<Question[]> {
   return (await res.json()) as Question[];
 }
 
+function shuffleOptions(q: Question): Question {
+  const indices = q.options.map((_, i) => i);
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+  return {
+    ...q,
+    options: indices.map((i) => q.options[i]),
+    correct_index: indices.indexOf(q.correct_index),
+  };
+}
+
+function shuffleBank(questions: Question[]): Question[] {
+  return questions.map(shuffleOptions);
+}
+
 export function useQuestionBank(): BankState {
   const [state, setState] = useState<BankState>({
     bank: [],
@@ -36,8 +53,8 @@ export function useQuestionBank(): BankState {
     const cacheValid = cached !== null && Date.now() - cached.fetchedAt < CACHE_TTL_MS;
 
     if (cacheValid && cached) {
-      // Serve immediately from cache
-      setState({ bank: cached.questions, isReady: true, error: false });
+      // Serve immediately from cache — shuffle options so correct answer position varies
+      setState({ bank: shuffleBank(cached.questions), isReady: true, error: false });
 
       // Background refresh — update cache silently on success (no re-render)
       fetchBank()
@@ -59,7 +76,7 @@ export function useQuestionBank(): BankState {
           return;
         }
         setQuestionCache({ fetchedAt: Date.now(), questions });
-        setState({ bank: questions, isReady: true, error: false });
+        setState({ bank: shuffleBank(questions), isReady: true, error: false });
       })
       .catch(() => {
         // Network error with no cached fallback
