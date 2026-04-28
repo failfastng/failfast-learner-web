@@ -22,6 +22,10 @@ export default function Root({ children }: PropsWithChildren) {
           content="Practice that counts the effort, not just the answer."
         />
         <meta property="og:image" content="https://learner.failfastng.com/og-preview.png" />
+        <meta property="og:image:secure_url" content="https://learner.failfastng.com/og-preview.png" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
         <meta property="og:url" content="https://learner.failfastng.com" />
         <meta property="og:type" content="website" />
 
@@ -34,6 +38,7 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="twitter:image" content="https://learner.failfastng.com/og-preview.png" />
 
         <link rel="icon" href="/favicon.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body>{children}</body>
     </html>
