@@ -2,6 +2,12 @@
 
 Expo SDK 54 + React Native + Expo Router v4 app for FailFast Learner — a WAEC/JAMB exam practice tool. Deployed as a static web export to Cloudflare Pages. No native builds — web only.
 
+## Agent memory
+
+**Read [`MEMORY.md`](./MEMORY.md) before starting any task.** It contains hard-won patterns and mistakes from past sessions that are not obvious from the code alone.
+
+**Update `MEMORY.md` when you finish.** If you hit a non-obvious problem, discover a new invariant, make a decision that future agents should know about, or find that an existing entry is wrong — add or correct it. Keep entries concise: state the rule, why it exists, and how to apply it. This file is the institutional memory for this codebase.
+
 ## Stack
 
 - Expo SDK 54, Expo Router v4 (static export)
