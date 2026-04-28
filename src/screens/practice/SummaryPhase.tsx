@@ -192,8 +192,9 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
     }
 
     if (variantRender.variant === 'RECOVERY') {
+      const rn = variantRender.corrections;
       const body = locked.recoveryBody
-        .replace(/\[N\]/g, String(variantRender.corrections))
+        .replace(/\[N\] times/g, `${rn} ${rn === 1 ? 'time' : 'times'}`)
         .replace(/\[perfectTotal\]/g, String(variantRender.perfectTotal));
       return <Text style={styles.variantBody}>{body}</Text>;
     }
@@ -203,9 +204,11 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
         state.sessionGrit > state.sessionSuccess
           ? locked.struggleBodyGritLed
           : locked.struggleBodySuccessLed;
+      const m = variantRender.walkThroughs;
+      const n = variantRender.corrections;
       const body = template
-        .replace(/\[N\]/g, String(variantRender.corrections))
-        .replace(/\[M\]/g, String(variantRender.walkThroughs))
+        .replace(/\[N\] times/g, `${n} ${n === 1 ? 'time' : 'times'}`)
+        .replace(/\[M\] questions/g, `${m} ${m === 1 ? 'question' : 'questions'}`)
         .replace(/\[perfectTotal\]/g, String(variantRender.perfectTotal))
         .replace(/\[X\]/g, String(variantRender.actualTotal));
       return <Text style={styles.variantBody}>{body}</Text>;
