@@ -1,4 +1,6 @@
 import { locked } from '../copy/locked';
+import { postShareEvent } from './analytics';
+import { getSessionId } from './storage';
 
 const SHARE_URL = 'https://learner.failfastng.com/?utm_source=share&utm_medium=link';
 
@@ -18,6 +20,7 @@ export function resetClickedShare(): void {
 
 export async function shareApp(): Promise<'shared' | 'copied' | 'dismissed'> {
   _clickedShareThisSession = true;
+  postShareEvent(getSessionId());
 
   const text = locked.shareText.replace('[link]', SHARE_URL);
   const nav = navigator as Navigator & { share?: (data: { text: string }) => Promise<void> };

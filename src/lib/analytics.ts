@@ -49,6 +49,14 @@ export function postResetEvent(session_uuid: string): void {
   }).catch((err) => console.warn('[analytics] reset POST failed', err));
 }
 
+export function postShareEvent(session_uuid: string): void {
+  fetch(`${process.env.EXPO_PUBLIC_API_BASE}/events/share`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ session_uuid }),
+  }).catch((err) => console.warn('[analytics] share POST failed', err));
+}
+
 // ── Build payload ─────────────────────────────────────────────────────────────
 
 export function buildSessionEndPayload(
