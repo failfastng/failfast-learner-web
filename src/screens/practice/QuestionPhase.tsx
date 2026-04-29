@@ -187,6 +187,8 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
     feedbackAttempt = 2;
   }
 
+  const canProceed = state.lastResolution !== 'pending';
+
   // ── Tap handler ──────────────────────────────────────────────────────────
   const handleOptionTap = (optionIndex: number, event?: GestureResponderEvent) => {
     if (state.lastResolution !== 'pending') return;
@@ -305,17 +307,21 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
           />
         )}
 
-        {/* Next Question button — shown when question is resolved */}
-        {state.lastResolution !== 'pending' && (
-          <Pressable
-            style={styles.nextButton}
-            onPress={() => dispatch({ type: 'NEXT_QUESTION' })}
-            accessibilityLabel={locked.nextQuestionButton}
-            accessibilityRole="button"
-          >
-            <Text style={styles.nextButtonText}>{locked.nextQuestionButton}</Text>
-          </Pressable>
-        )}
+        {/* Next Question — always visible, disabled until resolved */}
+        <Pressable
+          style={[styles.nextButton, !canProceed && styles.nextButtonDisabled]}
+          disabled={!canProceed}
+          onPress={() => {
+            if (canProceed) dispatch({ type: 'NEXT_QUESTION' });
+          }}
+          accessibilityLabel={locked.nextQuestionButton}
+          accessibilityRole="button"
+          accessibilityState={{ disabled: !canProceed }}
+        >
+          <Text style={[styles.nextButtonText, !canProceed && styles.nextButtonTextDisabled]}>
+            {locked.nextQuestionButton}
+          </Text>
+        </Pressable>
 
         {/* End Session link — always visible */}
         <Pressable
@@ -434,10 +440,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#111',
     alignItems: 'center',
   },
+  nextButtonDisabled: {
+    backgroundColor: '#e8e8e8',
+    opacity: 0.9,
+  },
   nextButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  nextButtonTextDisabled: {
+    color: '#888',
   },
   endSessionLink: {
     marginTop: 24,
