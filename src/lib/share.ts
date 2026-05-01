@@ -1,8 +1,9 @@
 import { locked } from '../copy/locked';
 import { postShareEvent } from './analytics';
 import { getSessionId } from './storage';
+import { getSiteUrl } from './site-url';
 
-const SHARE_URL = 'https://learner.failfastng.com/?utm_source=share&utm_medium=link';
+const SHARE_URL = `${getSiteUrl()}/?utm_source=share&utm_medium=link`;
 
 // ── Module-level clicked-share flag ──────────────────────────────────────────
 // Set to true the first time shareApp() is called in any session.

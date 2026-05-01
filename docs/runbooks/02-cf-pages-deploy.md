@@ -2,234 +2,179 @@
 
 > **Executor:** propersam personally (propersam2012@gmail.com)
 > **Item:** Checklist Item 3
-> **Prereqs:** Item 1 (repo exists, `main` branch pushed to GitHub), Item 2 (OCI VM running, DNS A record for `api.learner` added)
-> **DNS registrar:** Squarespace — add CNAME only; do NOT touch existing records
+> **Prereqs:** Item 1 (repo exists, `main` branch pushed to GitHub), Item 2 (OCI VM running; DNS **A** record `learner-api` under `failfastng.com` → VM public IP so `https://learner-api.failfastng.com` resolves)
 
 ---
 
-## DNS no-touch reminder
+## URLs (how they fit together)
 
-The following records at Squarespace are LOCKED — do not modify, delete, or migrate:
+| Role | URL |
+|------|-----|
+| **Cloudflare Pages default hostname** | `https://failfast-learner-web.pages.dev` (exact slug matches your Pages project name in the dashboard) |
+| **Production site (canonical)** | `https://learner.failfastng.com` — custom domain on the **same** Pages project |
+| **Learner API** | `https://learner-api.failfastng.com` (OCI + Caddy; not proxied through Cloudflare unless you choose to) |
 
-| Type  | Name              | Data                                       |
-|-------|-------------------|--------------------------------------------|
-| ALIAS | @                 | apex-loadbalancer.netlify.com              |
-| CNAME | www               | failfastng.netlify.app                     |
-| TXT   | google._domainkey | v=DKIM1; k=rsa; p=MIIBIjAN...             |
-| TXT   | @                 | v=spf1 include:_spf.google.com ~all        |
-| MX    | @                 | smtp.google.com (priority 1)               |
+Every production build should set **`EXPO_PUBLIC_SITE_URL=https://learner.failfastng.com`** so Open Graph tags, `og:url`, and in-app share links point at the public domain—not at `*.pages.dev`.
 
-Email continuity (Google Workspace) depends on the DKIM, SPF, and MX records above remaining untouched.
+Use **`failfast-learner-web.pages.dev`** only to smoke-test a deploy before DNS is ready, or for a deliberate staging project.
+
+---
+
+## DNS — do not break Google Workspace mail
+
+Wherever **authoritative DNS** for `failfastng.com` lives (Squarespace, Cloudflare, etc.), do **not** delete or rewrite:
+
+- **MX** → Google (`smtp.google.com` / Workspace values)
+- **SPF** (`TXT` at apex)
+- **DKIM** (`TXT` at `google._domainkey` or your Workspace hostnames)
+
+If you add or edit records for Learner web, only add the **`learner`** CNAME described below unless you know exactly what you are changing.
 
 ---
 
 ## Step 1 — Create the Cloudflare Pages project
 
-1. Log in to the Cloudflare dashboard: https://dash.cloudflare.com (account: propersam2012@gmail.com)
+1. Log in to the Cloudflare dashboard: https://dash.cloudflare.com
 2. Navigate to **Workers & Pages** → **Create** → **Pages** → **Connect to Git**
 3. Select the `failfastng` GitHub organisation → repository `failfast-learner-web`
 4. Set the following build configuration:
 
    | Field              | Value                                      |
-   |--------------------|---------------------------------------------|
+   |--------------------|--------------------------------------------|
    | Production branch  | `main`                                     |
-   | Build command      | `npx expo export --platform web`           |
+   | Build command      | `npx expo export --platform web`        |
    | Build output dir   | `dist`                                     |
    | Project name       | `failfast-learner-web`                     |
 
 5. Under **Environment variables**, add:
 
-   | Variable               | Value                                      |
-   |------------------------|--------------------------------------------|
-   | `NODE_VERSION`         | `22`                                       |
-   | `EXPO_PUBLIC_API_BASE` | `https://api.learner.failfastng.com`       |
+   | Variable                 | Value                                      |
+   |--------------------------|--------------------------------------------|
+   | `NODE_VERSION`           | `22`                                       |
+   | `EXPO_PUBLIC_API_BASE`   | `https://learner-api.failfastng.com`         |
+   | `EXPO_PUBLIC_SITE_URL`   | `https://learner.failfastng.com`           |
 
 6. Click **Save and Deploy**
-7. Wait for the first build to complete — typically 2–4 minutes. The project URL will be `failfast-learner-web.pages.dev` (or a variant if the name was taken).
+7. Wait for the first build — typically 2–4 minutes. Cloudflare assigns **`https://failfast-learner-web.pages.dev`** (or a suffix variant if the name was taken—copy the exact hostname from the project overview).
 
-> Note: if the project name `failfast-learner-web` is already taken in your Cloudflare account, use a slug variant and update the CNAME target in Step 3 accordingly.
+> If the project slug differs, use that slug’s **`*.pages.dev`** everywhere this runbook says `failfast-learner-web.pages.dev`.
 
 ---
 
-## Step 2 — Add custom domain in Cloudflare Pages
+## Step 2 — Attach custom domain in Cloudflare Pages
 
-After the first deploy completes successfully:
+After the first deploy succeeds:
 
-1. In the project dashboard: **Settings** → **Custom domains** → **Add custom domain**
-2. Enter: `learner.failfastng.com`
-3. Cloudflare will display a CNAME record to add. It will be:
+1. In the project: **Settings** → **Custom domains** → **Add custom domain**
+2. Enter: **`learner.failfastng.com`**
+3. Cloudflare shows the record you must create at your DNS host. Typically:
+
    ```
    Type: CNAME
    Name: learner
    Target: failfast-learner-web.pages.dev
    ```
-   (Copy the exact value Cloudflare shows — it matches the project name you set in Step 1.)
-4. Do NOT click "Activate domain" yet — add the DNS record first (Step 3), then return here to verify.
+
+   Use the **exact** target string Cloudflare displays.
+
+4. Add the record at your DNS provider (**Step 3**), then return here until the domain shows **Active**.
 
 ---
 
-## Step 3 — Add CNAME at Squarespace
+## Step 3 — Create the `learner` CNAME at your DNS provider
 
-1. Log in to Squarespace → **Domains** → **failfastng.com** → **DNS Settings** → **Custom Records**
-2. Click **Add Record** and enter:
+### Option A — DNS managed in Cloudflare (same account as Pages)
+
+1. **DNS** → zone **`failfastng.com`** → **Add record**
+2. **Type:** CNAME · **Name:** `learner` · **Target:** `failfast-learner-web.pages.dev` (or value from Step 2) · **Proxy status:** usually **DNS only** (grey cloud) for a straightforward Pages custom domain unless you intentionally want the orange cloud.
+
+### Option B — DNS still at Squarespace (registrar)
+
+1. Squarespace → **Domains** → **failfastng.com** → **DNS Settings** → **Custom Records**
+2. **Add record:**
 
    | Field | Value                              |
    |-------|------------------------------------|
    | Type  | CNAME                              |
    | Name  | `learner`                          |
    | Data  | `failfast-learner-web.pages.dev`   |
-   | TTL   | 300                                |
+   | TTL   | `300`                              |
 
-   > If you named the CF Pages project differently in Step 1, replace `failfast-learner-web.pages.dev` with the value Cloudflare displayed in Step 2.
+3. Save. Propagation is often 1–5 minutes at TTL 300.
 
-3. Save the record.
-4. Return to the Cloudflare Pages custom domain panel and click **Activate domain** (or wait — CF will poll and activate automatically once the CNAME propagates, typically within 1–5 minutes at TTL 300).
-
-**Do NOT modify any other records during this step.** The existing Squarespace records (listed in the DNS no-touch reminder above) must remain untouched.
+Do **not** remove unrelated records (especially mail-related TXT/MX).
 
 ---
 
 ## Step 4 — Verify OG tag injection
 
-After the first deploy resolves at `https://learner.failfastng.com`, run:
+Run this **after** `learner.failfastng.com` is active on Pages (and **`EXPO_PUBLIC_SITE_URL`** is set to that origin—Step 1).
 
 ```bash
 curl -s https://learner.failfastng.com | grep -E 'property="(og:|twitter:)'
 ```
 
-**Expected output** (four tags minimum):
+**Expected shape** (paths must match the repo—currently **`og-preview.png`** in `app/+html.tsx` / `app.config.ts`):
 
 ```html
 <meta property="og:title" content="FailFast Learner"/>
 <meta property="og:description" content="Practice that counts the effort, not just the answer."/>
-<meta property="og:image" content="https://learner.failfastng.com/og-placeholder.png"/>
+<meta property="og:image" content="https://learner.failfastng.com/og-preview.png"/>
 <meta property="og:url" content="https://learner.failfastng.com"/>
 <meta property="twitter:card" content="summary_large_image"/>
 <meta property="twitter:title" content="FailFast Learner"/>
 <meta property="twitter:description" content="Practice that counts the effort, not just the answer."/>
-<meta property="twitter:image" content="https://learner.failfastng.com/og-placeholder.png"/>
+<meta property="twitter:image" content="https://learner.failfastng.com/og-preview.png"/>
 ```
 
-**If the probe returns nothing** (the `app.config.ts > web.meta` mechanism did not inject tags), try fallbacks in this order:
+**Before** the custom domain is live, you can probe the default hostname only to confirm HTML ships:
 
-### Fallback 1 — Expo Router `<Head>` component
-
-Add to `app/_layout.tsx`:
-
-```tsx
-import { Head } from 'expo-router/head';
-
-// Inside your root layout component:
-<Head>
-  <meta property="og:title" content="FailFast Learner" />
-  <meta property="og:description" content="Practice that counts the effort, not just the answer." />
-  <meta property="og:image" content="https://learner.failfastng.com/og-placeholder.png" />
-  <meta property="og:url" content="https://learner.failfastng.com" />
-  <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:title" content="FailFast Learner" />
-  <meta property="twitter:description" content="Practice that counts the effort, not just the answer." />
-  <meta property="twitter:image" content="https://learner.failfastng.com/og-placeholder.png" />
-</Head>
+```bash
+curl -s https://failfast-learner-web.pages.dev | grep -E 'property="(og:|twitter:)'
 ```
 
-Commit, push to main, wait for CF Pages to redeploy, re-run the probe.
+Meta URLs will still show **`learner.failfastng.com`** if `EXPO_PUBLIC_SITE_URL` was set correctly at build time—that is expected.
 
-### Fallback 2 — `public/index.html` template
-
-Create `public/index.html` with a full HTML shell including the meta tags hardcoded in `<head>`. Expo uses this file as the template for `dist/index.html` during export.
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta property="og:title" content="FailFast Learner" />
-    <meta property="og:description" content="Practice that counts the effort, not just the answer." />
-    <meta property="og:image" content="https://learner.failfastng.com/og-placeholder.png" />
-    <meta property="og:url" content="https://learner.failfastng.com" />
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:title" content="FailFast Learner" />
-    <meta property="twitter:description" content="Practice that counts the effort, not just the answer." />
-    <meta property="twitter:image" content="https://learner.failfastng.com/og-placeholder.png" />
-    <%- scripts %>
-    <%- css %>
-  </head>
-  <body>
-    <%- rootTag %>
-  </body>
-</html>
-```
-
-> Note: the `<%- scripts %>`, `<%- css %>`, and `<%- rootTag %>` template variables are injected by Expo at export time. Check `node_modules/expo/static/entry.html` for the exact template syntax your SDK 54 version expects, and match it.
-
-### Fallback 3 — CF Pages `_headers` file
-
-Create a `_headers` file at the repo root. This sets HTTP response headers, not HTML `<meta>` tags — useful for `Link` preloads and security headers, but NOT a replacement for OG meta tags (crawlers read the HTML, not HTTP headers). If OG tags are still missing after Fallbacks 1 and 2, this file will not fix it. Use Fallback 2.
-
----
-
-After confirming which mechanism works: update `README.md > Web head injection` to record the winning mechanism and remove the fallback list.
+**If the probe returns nothing**, try the fallback ladder (Expo Router `<Head>`, `public/index.html`, etc.) documented in older checklist notes—or inspect `app/+html.tsx` / `app.config.ts` in this repo.
 
 ---
 
 ## Step 5 — Test link preview
 
-1. Open the Twitter Card Validator: https://cards-dev.twitter.com/validator
-2. Paste: `https://learner.failfastng.com`
-3. Click **Preview card**
+1. Open the Twitter Card Validator: https://cards-dev.twitter.com/validator  
+2. Paste: **`https://learner.failfastng.com`**  
+3. **Preview card**
 
-**Expected result:** card renders with:
-- Title: `FailFast Learner`
-- Description: `Practice that counts the effort, not just the answer.`
-- Image: the og-placeholder.png (a small solid-colour placeholder — Item 20 replaces this with the real designed asset)
-
-> If the validator shows a cached result from a prior crawl, use the "Request re-crawl" option or append a cache-bust query parameter to the URL.
+**Expected:** title, description, and **`og-preview.png`** (replace when final marketing asset exists).
 
 ---
 
 ## Step 6 — Verify auto-deploy on push
 
-1. Make a trivial change to the repo (e.g., add a blank line or comment to `README.md`)
-2. Commit and push to `main`
-3. In the Cloudflare Pages dashboard, watch the **Deployments** tab — a new build should appear within 30 seconds and go live within 2–3 minutes
-4. Hard-refresh `https://learner.failfastng.com` in the browser and confirm the trivial change is live
-
-This confirms the CI/CD loop: `git push main` → CF Pages build → live.
+1. Trivial commit on `main` (e.g. comment in `README.md`)
+2. Confirm a new deployment appears under **Deployments**
+3. Hard-refresh **`https://learner.failfastng.com`** and confirm the change
 
 ---
 
-## Step 7 — DNS continuity check
-
-Run this after all steps above to confirm email routing was not disrupted:
+## Step 7 — Mail + marketing sanity check
 
 ```bash
 dig MX failfastng.com +short
-# Expected: smtp.google.com
+# Expected: Google Workspace / smtp.google.com (unchanged)
 ```
 
-Also confirm the main site still resolves:
-
-```bash
-dig failfastng.com +short
-# Expected: resolves to Netlify load balancer IPs (not OCI, not CF)
-
-curl -sI https://failfastng.com | head -5
-# Expected: HTTP 200 or 301/302 from Netlify
-```
-
-If `dig MX` no longer returns `smtp.google.com`, check Squarespace DNS immediately — a MX record was modified or deleted during this procedure. Restore it from the inventory in `failfast-learner/docs/runbooks/00-prebuild-dns-inventory.md`.
+Confirm `www.failfastng.com` / apex behave as you intend for the marketing site (that stack may be Cloudflare Pages or another host—adjust expectations to match production).
 
 ---
 
 ## Checklist
 
-- [ ] CF Pages project created, first build green
-- [ ] Custom domain `learner.failfastng.com` added in CF Pages Settings
-- [ ] CNAME `learner → failfast-learner-web.pages.dev` added at Squarespace
-- [ ] CF Pages shows custom domain as "Active"
-- [ ] OG probe returns all 8 meta tags (or fallback mechanism applied and verified)
-- [ ] Twitter Card Validator renders the preview card correctly
-- [ ] Auto-deploy on push verified
-- [ ] DNS continuity check: MX still returns `smtp.google.com`
-- [ ] `README.md > Web head injection` updated with confirmed mechanism
+- [ ] CF Pages project **`failfast-learner-web`** created; first build green
+- [ ] Env vars: `EXPO_PUBLIC_API_BASE`, `EXPO_PUBLIC_SITE_URL`, `NODE_VERSION`
+- [ ] Custom domain **`learner.failfastng.com`** active on the Pages project
+- [ ] CNAME **`learner` → `failfast-learner-web.pages.dev`** at authoritative DNS (Cloudflare or Squarespace, depending on where DNS lives)
+- [ ] **`curl`** OG probe against **`https://learner.failfastng.com`** passes
+- [ ] Link preview validator OK for **`https://learner.failfastng.com`**
+- [ ] Push-to-deploy verified
+- [ ] MX / Workspace mail still correct (`dig MX`)

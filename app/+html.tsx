@@ -3,6 +3,9 @@
 
 import { type PropsWithChildren } from 'react';
 import { ScrollViewStyleReset } from 'expo-router/html';
+import { getSiteUrl } from '../src/lib/site-url';
+
+const siteUrl = getSiteUrl();
 
 export default function Root({ children }: PropsWithChildren) {
   return (
@@ -21,15 +24,12 @@ export default function Root({ children }: PropsWithChildren) {
           property="og:description"
           content="Practice that counts the effort, not just the answer."
         />
-        <meta property="og:image" content="https://learner.failfastng.com/og-preview.png" />
-        <meta
-          property="og:image:secure_url"
-          content="https://learner.failfastng.com/og-preview.png"
-        />
+        <meta property="og:image" content={`${siteUrl}/og-preview.png`} />
+        <meta property="og:image:secure_url" content={`${siteUrl}/og-preview.png`} />
         <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
-        <meta property="og:url" content="https://learner.failfastng.com" />
+        <meta property="og:url" content={siteUrl} />
         <meta property="og:type" content="website" />
 
         <meta name="twitter:card" content="summary_large_image" />
@@ -38,7 +38,7 @@ export default function Root({ children }: PropsWithChildren) {
           name="twitter:description"
           content="Practice that counts the effort, not just the answer."
         />
-        <meta name="twitter:image" content="https://learner.failfastng.com/og-preview.png" />
+        <meta name="twitter:image" content={`${siteUrl}/og-preview.png`} />
 
         <link rel="icon" href="/favicon.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

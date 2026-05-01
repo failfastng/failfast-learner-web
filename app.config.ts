@@ -1,5 +1,11 @@
 import { ExpoConfig, ConfigContext } from 'expo/config';
 
+/** Mirrors src/lib/site-url.ts — inlined here because Expo loads app.config without resolving ./src imports reliably. */
+const siteUrl = (process.env.EXPO_PUBLIC_SITE_URL ?? 'https://learner.failfastng.com').replace(
+  /\/$/,
+  '',
+);
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'FailFast Learner',
@@ -40,17 +46,17 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       description: 'Practice that counts the effort, not just the answer.',
       'og:title': 'FailFast Learner',
       'og:description': 'Practice that counts the effort, not just the answer.',
-      'og:image': 'https://learner.failfastng.com/og-preview.png',
-      'og:url': 'https://learner.failfastng.com',
+      'og:image': `${siteUrl}/og-preview.png`,
+      'og:url': siteUrl,
       'og:type': 'website',
       'twitter:card': 'summary_large_image',
       'twitter:title': 'FailFast Learner',
       'twitter:description': 'Practice that counts the effort, not just the answer.',
-      'twitter:image': 'https://learner.failfastng.com/og-preview.png',
+      'twitter:image': `${siteUrl}/og-preview.png`,
     },
   },
   plugins: ['expo-router'],
   extra: {
-    apiBase: process.env.EXPO_PUBLIC_API_BASE ?? 'https://api.learner.failfastng.com',
+    apiBase: process.env.EXPO_PUBLIC_API_BASE ?? 'https://learner-api.failfastng.com',
   },
 });
