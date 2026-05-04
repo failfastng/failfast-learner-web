@@ -106,7 +106,7 @@ export const locked = {
   reviewPromptReturning: 'Tell us what you like and what to improve.',
   reviewPlaceholder: 'Tell us what to fix or add.',
   reviewSubmitButton: 'Send',
-  reviewThankYouToast: 'Thanks. We will use this to improve.',
+  reviewThankYouToast: 'Thanks, your review is much appreciated.',
 
   // ── Misc ──────────────────────────────────────────────────────────────────
   learnerFallback: 'Learner',

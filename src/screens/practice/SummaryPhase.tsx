@@ -453,7 +453,14 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
       {showCopiedToast && <Toast message={locked.toastCopied} durationMs={2500} />}
 
       {/* Review thank-you toast */}
-      {showReviewToast && <Toast message={locked.reviewThankYouToast} durationMs={2500} />}
+      {showReviewToast && (
+        <Toast
+          message={locked.reviewThankYouToast}
+          durationMs={3000}
+          fadeInMs={600}
+          fadeOutMs={800}
+        />
+      )}
     </View>
   );
 }

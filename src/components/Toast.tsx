@@ -5,17 +5,25 @@ type Props = {
   message: string;
   action?: { label: string; onPress: () => void };
   durationMs?: number;
+  fadeInMs?: number;
+  fadeOutMs?: number;
 };
 
-export function Toast({ message, action, durationMs = 3000 }: Props) {
+export function Toast({
+  message,
+  action,
+  durationMs = 3000,
+  fadeInMs = 200,
+  fadeOutMs = 300,
+}: Props) {
   const [visible, setVisible] = useState(true);
   const opacity = new Animated.Value(0);
 
   useEffect(() => {
     Animated.sequence([
-      Animated.timing(opacity, { toValue: 1, duration: 200, useNativeDriver: true }),
+      Animated.timing(opacity, { toValue: 1, duration: fadeInMs, useNativeDriver: true }),
       Animated.delay(durationMs),
-      Animated.timing(opacity, { toValue: 0, duration: 300, useNativeDriver: true }),
+      Animated.timing(opacity, { toValue: 0, duration: fadeOutMs, useNativeDriver: true }),
     ]).start(() => setVisible(false));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
