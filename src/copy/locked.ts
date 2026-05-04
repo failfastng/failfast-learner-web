@@ -8,7 +8,7 @@ export const locked = {
   // ── Start screen ──────────────────────────────────────────────────────────
   taglineCold: 'Practice that counts the effort, not just the answer.',
   explainerCold:
-    'Every question gives you three tries. You earn points for getting it right, and you earn more points for the trying. Struggling counts.',
+    'Every question gives you three tries. You earn points for getting it right, and more points for the trying. Use all three and still miss it? The correct answer is shown with a brief explanation. Struggling counts.',
   nameFieldLabel: 'What should we call you?',
   nameFieldPlaceholder: 'Learner',
   subjectLabelMaths: 'Mathematics',
