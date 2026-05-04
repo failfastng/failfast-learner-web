@@ -20,6 +20,7 @@ export type Question = {
   options: string[];
   correct_index: number;
   source: string;
+  explanation: string;
 };
 
 export type Outcome =

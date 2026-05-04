@@ -212,6 +212,18 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginBottom: 32,
   },
+  miniBadge: {
+    backgroundColor: '#f0f0f0',
+    borderRadius: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    marginLeft: 6,
+    marginTop: 4,
+  },
+  miniBadgeText: {
+    fontSize: 11,
+    color: '#888',
+  },
   wordmark: {
     fontSize: fontSize.hero,
     fontWeight: fontWeight.bold,

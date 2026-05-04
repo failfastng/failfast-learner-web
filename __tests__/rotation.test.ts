@@ -22,6 +22,7 @@ function makeQuestion(id: string): Question {
     options: ['A', 'B', 'C', 'D'],
     correct_index: 0,
     source: 'test',
+    explanation: '',
   };
 }
 

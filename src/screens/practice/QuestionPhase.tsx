@@ -307,6 +307,11 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
           />
         )}
 
+        {/* Explanation — shown after resolution (correct or failed-through) */}
+        {canProceed && currentQuestion.explanation && (
+          <Text style={styles.explanation}>{currentQuestion.explanation}</Text>
+        )}
+
         {/* Next Question — always visible, disabled until resolved */}
         <Pressable
           style={[styles.nextButton, !canProceed && styles.nextButtonDisabled]}
@@ -463,6 +468,13 @@ const styles = StyleSheet.create({
   },
   bottomSpacer: {
     height: 24,
+  },
+  explanation: {
+    marginTop: 16,
+    fontSize: 14,
+    lineHeight: 20,
+    color: '#666',
+    fontStyle: 'italic',
   },
   // Modal
   modalOverlay: {
