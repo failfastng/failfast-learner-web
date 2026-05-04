@@ -101,6 +101,13 @@ export const locked = {
   shareText:
     'I just took a practice session on FailFast Learner. The app scored my effort as much as my correctness. Try it yourself: [link].',
 
+  // ── Review ────────────────────────────────────────────────────────────────
+  reviewPromptSummary: 'Tell us how this session was for you.',
+  reviewPromptReturning: 'Tell us how this has been for you.',
+  reviewPlaceholder: 'Tell us what to fix or add.',
+  reviewSubmitButton: 'Send',
+  reviewThankYouToast: 'Thanks. We will use this to improve.',
+
   // ── Misc ──────────────────────────────────────────────────────────────────
   learnerFallback: 'Learner',
   loadingQuestion: 'Loading question...',

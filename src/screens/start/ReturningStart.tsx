@@ -19,6 +19,7 @@ import { useProgressStore } from '../../hooks/useProgressStore';
 import { getDisplayName } from '../../lib/displayName';
 import { saveDisplayName } from '../../lib/storage';
 import { shareApp } from '../../lib/share';
+import { postReview } from '../../lib/analytics';
 import { Toast } from '../../components/Toast';
 import type { Subject } from '../../types/domain';
 
@@ -32,6 +33,16 @@ export default function ReturningStart() {
   const [nameInput, setNameInput] = useState(getDisplayName());
   const [resetModalVisible, setResetModalVisible] = useState(false);
   const [showCopiedToast, setShowCopiedToast] = useState(false);
+  const [reviewText, setReviewText] = useState('');
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [showReviewToast, setShowReviewToast] = useState(false);
+
+  function handleReviewSubmit() {
+    if (!reviewText.trim()) return;
+    postReview(reviewText.trim(), 'returning_start');
+    setReviewSubmitted(true);
+    setShowReviewToast(true);
+  }
 
   function handleStart() {
     if (!selectedSubject) return;
@@ -129,6 +140,34 @@ export default function ReturningStart() {
         >
           <Text style={styles.shareLinkText}>{locked.shareAppLink}</Text>
         </TouchableOpacity>
+
+        {/* Review */}
+        {!reviewSubmitted && (
+          <View style={styles.reviewSection}>
+            <Text style={styles.reviewPrompt}>{locked.reviewPromptReturning}</Text>
+            <TextInput
+              style={styles.reviewInput}
+              value={reviewText}
+              onChangeText={setReviewText}
+              placeholder={locked.reviewPlaceholder}
+              placeholderTextColor={colors.textMuted}
+              multiline
+              numberOfLines={3}
+              autoCorrect={false}
+              autoCapitalize="sentences"
+              accessibilityLabel={locked.reviewPromptReturning}
+            />
+            <TouchableOpacity
+              style={[styles.reviewButton, !reviewText.trim() && styles.reviewButtonDisabled]}
+              onPress={handleReviewSubmit}
+              disabled={!reviewText.trim()}
+              accessibilityRole="button"
+              accessibilityLabel={locked.reviewSubmitButton}
+            >
+              <Text style={styles.reviewButtonText}>{locked.reviewSubmitButton}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </ScrollView>
 
       {/* Reset confirm modal */}
@@ -136,6 +175,9 @@ export default function ReturningStart() {
 
       {/* Copied toast */}
       {showCopiedToast && <Toast message={locked.toastCopied} durationMs={2500} />}
+
+      {/* Review thank-you toast */}
+      {showReviewToast && <Toast message={locked.reviewThankYouToast} durationMs={2500} />}
     </View>
   );
 }
@@ -231,5 +273,48 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     textDecorationLine: 'underline',
     textAlign: 'center',
+  },
+  reviewSection: {
+    width: '100%',
+    maxWidth: 420,
+    marginTop: 40,
+    borderTopWidth: 1,
+    borderTopColor: colors.borderSubtle,
+    paddingTop: 24,
+  },
+  reviewPrompt: {
+    fontSize: fontSize.sm,
+    color: colors.textSecondary,
+    marginBottom: 10,
+  },
+  reviewInput: {
+    borderWidth: 1.5,
+    borderColor: colors.borderSubtle,
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: Platform.OS === 'web' ? 12 : 14,
+    fontSize: fontSize.base,
+    color: colors.textPrimary,
+    backgroundColor: colors.surface,
+    minHeight: 80,
+    textAlignVertical: 'top',
+    outlineStyle: 'none',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any,
+  reviewButton: {
+    marginTop: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    backgroundColor: colors.buttonPrimary,
+    alignSelf: 'flex-end',
+  },
+  reviewButtonDisabled: {
+    opacity: 0.4,
+  },
+  reviewButtonText: {
+    color: colors.buttonPrimaryText,
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.semibold,
   },
 });

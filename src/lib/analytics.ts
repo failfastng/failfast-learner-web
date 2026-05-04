@@ -57,6 +57,14 @@ export function postShareEvent(session_uuid: string): void {
   }).catch((err) => console.warn('[analytics] share POST failed', err));
 }
 
+export function postReview(text: string, source: 'summary' | 'returning_start'): void {
+  fetch(`${process.env.EXPO_PUBLIC_API_BASE}/reviews`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ session_uuid: getSessionId(), text, source }),
+  }).catch((err) => console.warn('[analytics] review POST failed', err));
+}
+
 // ── Build payload ─────────────────────────────────────────────────────────────
 
 export function buildSessionEndPayload(

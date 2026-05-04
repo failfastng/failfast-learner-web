@@ -13,7 +13,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { getProgress, getWaitlistedAt } from '../../lib/storage';
@@ -21,7 +21,7 @@ import { WaitlistSection } from '../../components/WaitlistSection';
 import { getDisplayName } from '../../lib/displayName';
 import type { Href } from 'expo-router';
 import { hashDisplayName } from '../../lib/hash';
-import { buildSessionEndPayload, postSessionEnd } from '../../lib/analytics';
+import { buildSessionEndPayload, postSessionEnd, postReview } from '../../lib/analytics';
 import { selectSummaryVariant, countCorrections, countWalkThroughs } from '../../lib/summary';
 import { shareApp } from '../../lib/share';
 import { locked } from '../../copy/locked';
@@ -142,6 +142,16 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
   const [resetModalOpen, setResetModalOpen] = useState(false);
   const [waitlistedAt, setWaitlistedAtState] = useState<string | null>(() => getWaitlistedAt());
   const [showCopiedToast, setShowCopiedToast] = useState(false);
+  const [reviewText, setReviewText] = useState('');
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [showReviewToast, setShowReviewToast] = useState(false);
+
+  function handleReviewSubmit() {
+    if (!reviewText.trim()) return;
+    postReview(reviewText.trim(), 'summary');
+    setReviewSubmitted(true);
+    setShowReviewToast(true);
+  }
 
   // Fire session analytics exactly once when summary mounts
   useEffect(() => {
@@ -407,12 +417,43 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
         {/* TertiaryRow */}
         <TertiaryRow />
 
+        {/* Review */}
+        {!reviewSubmitted && (
+          <View style={styles.reviewSection}>
+            <Text style={styles.reviewPrompt}>{locked.reviewPromptSummary}</Text>
+            <TextInput
+              style={styles.reviewInput}
+              value={reviewText}
+              onChangeText={setReviewText}
+              placeholder={locked.reviewPlaceholder}
+              placeholderTextColor="#aaa"
+              multiline
+              numberOfLines={3}
+              autoCorrect={false}
+              autoCapitalize="sentences"
+              accessibilityLabel={locked.reviewPromptSummary}
+            />
+            <Pressable
+              style={[styles.reviewButton, !reviewText.trim() && styles.reviewButtonDisabled]}
+              onPress={handleReviewSubmit}
+              disabled={!reviewText.trim()}
+              accessibilityRole="button"
+              accessibilityLabel={locked.reviewSubmitButton}
+            >
+              <Text style={styles.reviewButtonText}>{locked.reviewSubmitButton}</Text>
+            </Pressable>
+          </View>
+        )}
+
         {/* Reset Confirm Modal */}
         <ResetConfirmModal visible={resetModalOpen} onClose={() => setResetModalOpen(false)} />
       </ScrollView>
 
       {/* Copied toast — absolute overlay */}
       {showCopiedToast && <Toast message={locked.toastCopied} durationMs={2500} />}
+
+      {/* Review thank-you toast */}
+      {showReviewToast && <Toast message={locked.reviewThankYouToast} durationMs={2500} />}
     </View>
   );
 }
@@ -462,5 +503,44 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#888',
     textDecorationLine: 'underline',
+  },
+  reviewSection: {
+    marginTop: 40,
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+    paddingTop: 24,
+  },
+  reviewPrompt: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 10,
+  },
+  reviewInput: {
+    borderWidth: 1.5,
+    borderColor: '#d1d5db',
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 15,
+    color: '#111827',
+    backgroundColor: '#fff',
+    minHeight: 80,
+    textAlignVertical: 'top',
+  },
+  reviewButton: {
+    marginTop: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    backgroundColor: '#111',
+    alignSelf: 'flex-end',
+  },
+  reviewButtonDisabled: {
+    backgroundColor: '#ccc',
+  },
+  reviewButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
