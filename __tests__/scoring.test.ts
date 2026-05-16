@@ -10,7 +10,7 @@
  *  6. Edge: scoreBranch(0).success + scoreBranch(0).grit === 20
  */
 
-import { scoreBranch } from '../src/lib/scoring';
+import { gritIncrementForWrongTap, scoreBranch } from '../src/lib/scoring';
 
 // ── Test 1 ────────────────────────────────────────────────────────────────────
 test('scoreBranch(0) → 15 success / 5 grit (first-try correct)', () => {
@@ -56,4 +56,24 @@ test('floor property: every resolved outcome has success + grit >= 20', () => {
 test('edge: scoreBranch(0).success + scoreBranch(0).grit === 20', () => {
   const { success, grit } = scoreBranch(0);
   expect(success + grit).toBe(20);
+});
+
+// ── gritIncrementForWrongTap ──────────────────────────────────────────────────
+test('gritIncrementForWrongTap(0) → 15 (1st wrong tap)', () => {
+  expect(gritIncrementForWrongTap(0)).toBe(15);
+});
+
+test('gritIncrementForWrongTap(1) → 5 (2nd wrong tap)', () => {
+  expect(gritIncrementForWrongTap(1)).toBe(5);
+});
+
+test('gritIncrementForWrongTap(2) → 5 (3rd wrong tap, failed-through)', () => {
+  expect(gritIncrementForWrongTap(2)).toBe(5);
+});
+
+test('marginal wrong-tap increments sum to canonical failed-through total of 25', () => {
+  const sum =
+    gritIncrementForWrongTap(0) + gritIncrementForWrongTap(1) + gritIncrementForWrongTap(2);
+  expect(sum).toBe(25);
+  expect(sum).toBe(scoreBranch(3).grit);
 });

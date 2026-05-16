@@ -210,18 +210,36 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
     }
 
     if (variantRender.variant === 'STRUGGLE') {
-      const template =
-        state.sessionGrit > state.sessionSuccess
-          ? locked.struggleBodyGritLed
-          : locked.struggleBodySuccessLed;
       const m = variantRender.walkThroughs;
       const n = variantRender.corrections;
-      const body = template
-        .replace(/\[N\] times/g, `${n} ${n === 1 ? 'time' : 'times'}`)
-        .replace(/\[M\] questions/g, `${m} ${m === 1 ? 'question' : 'questions'}`)
-        .replace(/\[perfectTotal\]/g, String(variantRender.perfectTotal))
-        .replace(/\[X\]/g, String(variantRender.actualTotal));
-      return <Text style={styles.variantBody}>{body}</Text>;
+      const lines: string[] = [];
+      if (n > 0) {
+        lines.push(
+          locked.struggleClauseCorrections.replace(
+            '[N] times',
+            `${n} ${n === 1 ? 'time' : 'times'}`,
+          ),
+        );
+      }
+      if (m > 0) {
+        lines.push(
+          locked.struggleClauseWalkThroughs.replace(
+            '[M] questions',
+            `${m} ${m === 1 ? 'question' : 'questions'}`,
+          ),
+        );
+      }
+      lines.push(
+        locked.struggleTrailerCommon
+          .replace(/\[perfectTotal\]/g, String(variantRender.perfectTotal))
+          .replace(/\[X\]/g, String(variantRender.actualTotal)),
+      );
+      const moral =
+        state.sessionGrit > state.sessionSuccess
+          ? locked.struggleTrailerGritLed
+          : locked.struggleTrailerSuccessLed;
+      lines.push(moral.replace(/\[perfectTotal\]/g, String(variantRender.perfectTotal)));
+      return <Text style={styles.variantBody}>{lines.join('\n')}</Text>;
     }
 
     // ALL_SKILLED

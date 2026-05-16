@@ -36,3 +36,17 @@ export function scoreBranch(wrongAttemptsBefore: number): ScoreResult {
       return { success: 0, grit: 25 };
   }
 }
+
+/**
+ * Marginal Grit booked on a wrong tap.
+ *   0 -> 1st wrong tap -> 15
+ *   1 -> 2nd wrong tap -> 5
+ *   2 -> 3rd wrong tap (failed-through) -> 5
+ *
+ * Increments sum to the canonical per-question Grit totals (15, 20, 25).
+ * The TAP_OPTION reducer pairs this with a residual top-up on the correct
+ * tap so per-question Grit always lands on the canonical scoreBranch totals.
+ */
+export function gritIncrementForWrongTap(wrongTapIndex: 0 | 1 | 2): number {
+  return wrongTapIndex === 0 ? 15 : 5;
+}

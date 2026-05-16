@@ -1,5 +1,5 @@
 import { useReducer } from 'react';
-import { scoreBranch } from '../lib/scoring';
+import { gritIncrementForWrongTap, scoreBranch } from '../lib/scoring';
 import type { Outcome, Question, SessionState, Subject } from '../types/domain';
 
 // ── Action union ──────────────────────────────────────────────────────────────
@@ -24,7 +24,7 @@ function nowISO(): string {
   return new Date().toISOString();
 }
 
-function makeInitialState(subject: Subject): SessionState {
+export function makeInitialState(subject: Subject): SessionState {
   return {
     phase: 'loading',
     subject,
@@ -49,7 +49,8 @@ function makeInitialState(subject: Subject): SessionState {
 // ── Pure reducer ──────────────────────────────────────────────────────────────
 // NO side effects inside. All localStorage writes and analytics POSTs live in
 // useEffect hooks in QuestionPhase.tsx watching specific state slices.
-function sessionReducer(state: SessionState, action: Action): SessionState {
+// Exported for direct unit testing — see __tests__/sessionReducer.test.ts.
+export function sessionReducer(state: SessionState, action: Action): SessionState {
   switch (action.type) {
     // ── LOADED ──────────────────────────────────────────────────────────────
     case 'LOADED': {
@@ -81,20 +82,28 @@ function sessionReducer(state: SessionState, action: Action): SessionState {
       if (state.lastResolution !== 'pending') return state;
 
       // ── Correct tap ──────────────────────────────────────────────────────
+      // scoreBranch returns the canonical per-question total. The wrong-tap
+      // path has already booked some of that Grit incrementally; only the
+      // residual is added here. wrongGritBooked map: 0/15/20 for 0/1/2 prior
+      // wrong taps. Net effect — branch 0: +15 SP / +5 GP. Branch 1: +5 SP
+      // / +0 GP (15 already booked). Branch 2: +3 SP / +0 GP (20 booked).
       if (isCorrect) {
-        const { success, grit } = scoreBranch(state.tappedWrongIndices.length);
+        const wrongCount = state.tappedWrongIndices.length;
+        const { success, grit } = scoreBranch(wrongCount);
+        const wrongGritBooked = wrongCount === 0 ? 0 : wrongCount === 1 ? 15 : 20;
+        const gritDelta = grit - wrongGritBooked;
 
         const outcomeLabel: Outcome =
-          state.tappedWrongIndices.length === 0
+          wrongCount === 0
             ? 'first_try_correct'
-            : state.tappedWrongIndices.length === 1
+            : wrongCount === 1
               ? 'second_try_correct'
               : 'third_try_correct';
 
         return {
           ...state,
           sessionSuccess: state.sessionSuccess + success,
-          sessionGrit: state.sessionGrit + grit,
+          sessionGrit: state.sessionGrit + gritDelta,
           lastResolution: 'correct',
           outcomes: [...state.outcomes, outcomeLabel],
           lastActivityAt: nowISO(),
@@ -102,14 +111,18 @@ function sessionReducer(state: SessionState, action: Action): SessionState {
       }
 
       // ── Wrong tap ────────────────────────────────────────────────────────
+      // Marginal Grit increments: 15 on 1st wrong, 5 on 2nd, 5 on 3rd.
+      // Sums match canonical per-question totals (15 / 20 / 25).
+      const wrongTapIndex = state.tappedWrongIndices.length as 0 | 1 | 2;
+      const gritIncrement = gritIncrementForWrongTap(wrongTapIndex);
       const newWrongIndices = [...state.tappedWrongIndices, optionIndex];
 
-      // Wrong tap, attempt 3 (this is the 3rd wrong — tappedWrongIndices was length 2)
-      if (state.tappedWrongIndices.length === 2) {
+      // 3rd wrong → failed-through
+      if (wrongTapIndex === 2) {
         return {
           ...state,
           tappedWrongIndices: newWrongIndices,
-          sessionGrit: state.sessionGrit + 25,
+          sessionGrit: state.sessionGrit + gritIncrement,
           optionRevealed: true,
           lastResolution: 'failed-through',
           outcomes: [...state.outcomes, 'failed_through'],
@@ -117,11 +130,11 @@ function sessionReducer(state: SessionState, action: Action): SessionState {
         };
       }
 
-      // Wrong tap, attempt 1 or 2
+      // 1st or 2nd wrong
       return {
         ...state,
         tappedWrongIndices: newWrongIndices,
-        sessionGrit: state.sessionGrit + 15,
+        sessionGrit: state.sessionGrit + gritIncrement,
         currentAttempt: (state.currentAttempt + 1) as 1 | 2 | 3,
         lastActivityAt: nowISO(),
       };

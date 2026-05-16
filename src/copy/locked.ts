@@ -40,10 +40,16 @@ export const locked = {
   wrongCopyAttempt1: "That wasn't it, [Name]. You've got 2 attempts left.",
   wrongCopyAttempt2: "That wasn't it, [Name]. You've got 1 attempt left.",
 
+  // ── GritFloat float-up strings ────────────────────────────────────────────
+  // Marginal increments — 1st wrong adds 15, 2nd and 3rd add 5 each. The
+  // running counter reflects the canonical per-question total at any point.
+  gritFloatFirstWrong: '+15 Grit Points for trying',
+  gritFloatSubsequent: '+5 Grit Points',
+
   // ── Correct / failed-through ──────────────────────────────────────────────
   // [X] → awarded points
   correctCopy: 'You earned [X] points.',
-  failedThroughCopy: 'You walked through every option. +25 Grit Points.',
+  failedThroughCopy: 'You walked through every option. Maximum 25 Grit Points earned.',
 
   // ── Question flow controls ────────────────────────────────────────────────
   nextQuestionButton: 'Next Question',
@@ -62,10 +68,15 @@ export const locked = {
     'Every question, first try. That is not luck, that is knowledge you already have.\nYour Success Points outpaced your Grit Points by 3 to 1. That is mastery.\n\nNow try [Subject]. Unfamiliar ground is where the fail-forward mechanic actually pays off. See how it feels to earn points for getting it wrong.',
   recoveryBody:
     'You corrected yourself [N] times.\nA user who got every question right on the first try would have scored [perfectTotal].\nYou scored the same [perfectTotal]. Every mistake you made was fully recovered.\nThat is the fail-forward system working exactly as designed.',
-  struggleBodyGritLed:
-    'You corrected yourself [N] times. You walked through every option on [M] questions.\nA user who got every question right on the first try would have scored [perfectTotal].\nYou scored [X]. Your Grit outweighed your Success.\nThe struggle itself is what put you past [perfectTotal].',
-  struggleBodySuccessLed:
-    'You corrected yourself [N] times. You walked through every option on [M] questions.\nA user who got every question right on the first try would have scored [perfectTotal].\nYou scored [X]. The struggle itself is what put you past [perfectTotal].',
+  // STRUGGLE body is composed in SummaryPhase from these clauses so we never
+  // render "0 times" or "0 questions" when abandonment drives a count to 0.
+  struggleClauseCorrections: 'You corrected yourself [N] times.',
+  struggleClauseWalkThroughs: 'You walked through every option on [M] questions.',
+  struggleTrailerCommon:
+    'A user who got every question right on the first try would have scored [perfectTotal].\nYou scored [X].',
+  struggleTrailerGritLed:
+    'Your Grit outweighed your Success.\nThe struggle itself is what put you past [perfectTotal].',
+  struggleTrailerSuccessLed: 'The struggle itself is what put you past [perfectTotal].',
   allSkilledMilestoneBody:
     'You have now taken every subject to Skilled. That is the whole preview.\nA preview is what it is — a small slice of one idea, played through to its edges. You are at the edge.\n\nYou have seen what the preview can do. The full platform is next.',
   allSkilledMilestoneBodyShort:

@@ -112,19 +112,17 @@ export function QuestionPhase({ state, dispatch, bank, subject }: Props) {
     });
   }, [state.outcomes.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── GritFloat: fire on each wrong tap ────────────────────────────────────
+  // ── GritFloat: fire on each wrong tap (including the failed-through 3rd) ─
+  // 1st wrong tap shows +15; 2nd and 3rd show +5 (the marginal increments).
+  // Running counter ticks 0 -> 15 -> 20 -> 25, matching canonical totals.
   useEffect(() => {
-    if (state.tappedWrongIndices.length > 0 && state.lastResolution === 'pending') {
-      gritFloatRef.current?.fire(lastTapPosition.current, '+15 Grit Points for trying');
-    }
-  }, [state.tappedWrongIndices.length]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // ── GritFloat: fire on failed-through ────────────────────────────────────
-  useEffect(() => {
-    if (state.lastResolution === 'failed-through') {
-      gritFloatRef.current?.fire(lastTapPosition.current, '+25 Grit Points');
-    }
-  }, [state.lastResolution]);
+    if (state.tappedWrongIndices.length === 0) return;
+    const message =
+      state.tappedWrongIndices.length === 1
+        ? locked.gritFloatFirstWrong
+        : locked.gritFloatSubsequent;
+    gritFloatRef.current?.fire(lastTapPosition.current, message);
+  }, [state.tappedWrongIndices.length]);
 
   // ── markQuestionSeen: fires on any resolution (correct OR failed-through) ─
   // Per Story 2.8: abandoned questions are NOT marked seen.
