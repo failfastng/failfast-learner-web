@@ -1,6 +1,7 @@
 import { scoreBranch } from './scoring';
 import { getSessionId, getWaitlistedAt } from './storage';
 import { getClickedShare } from './share';
+import { getRuntimeApiBase } from './site-url';
 import type { SessionState, Subject } from '../types/domain';
 
 // ── Payload types ─────────────────────────────────────────────────────────────
@@ -34,7 +35,7 @@ type SessionEndPayload = {
 // ── Fire-and-forget POSTs ─────────────────────────────────────────────────────
 
 export function postSessionEnd(payload: SessionEndPayload): void {
-  fetch(`${process.env.EXPO_PUBLIC_API_BASE}/sessions`, {
+  fetch(`${getRuntimeApiBase()}/sessions`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -42,7 +43,7 @@ export function postSessionEnd(payload: SessionEndPayload): void {
 }
 
 export function postResetEvent(session_uuid: string): void {
-  fetch(`${process.env.EXPO_PUBLIC_API_BASE}/events/reset`, {
+  fetch(`${getRuntimeApiBase()}/events/reset`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ session_uuid }),
@@ -50,7 +51,7 @@ export function postResetEvent(session_uuid: string): void {
 }
 
 export function postShareEvent(session_uuid: string): void {
-  fetch(`${process.env.EXPO_PUBLIC_API_BASE}/events/share`, {
+  fetch(`${getRuntimeApiBase()}/events/share`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ session_uuid }),
@@ -58,7 +59,7 @@ export function postShareEvent(session_uuid: string): void {
 }
 
 export function postReview(text: string, source: 'summary' | 'returning_start'): void {
-  fetch(`${process.env.EXPO_PUBLIC_API_BASE}/reviews`, {
+  fetch(`${getRuntimeApiBase()}/reviews`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ session_uuid: getSessionId(), text, source }),

@@ -3,7 +3,7 @@
  * Covers: getRuntimeSiteUrl() and getMarketingUrl() runtime domain helpers.
  */
 
-import { getRuntimeSiteUrl, getMarketingUrl } from '../src/lib/site-url';
+import { getRuntimeSiteUrl, getMarketingUrl, getRuntimeApiBase } from '../src/lib/site-url';
 
 // ── window.location helpers ───────────────────────────────────────────────────
 
@@ -82,4 +82,26 @@ test('getMarketingUrl("/privacy") maps learner.failfastng.com to https://failfas
 test('getMarketingUrl() falls back to https://failfastng.com when window is undefined', () => {
   delete process.env.EXPO_PUBLIC_SITE_URL;
   expect(getMarketingUrl()).toBe('https://failfastng.com');
+});
+
+// ── getRuntimeApiBase ─────────────────────────────────────────────────────────
+
+test('getRuntimeApiBase() maps learner.failfastedu.com to https://learner-api.failfastedu.com', () => {
+  setWindowOrigin('https://learner.failfastedu.com');
+  expect(getRuntimeApiBase()).toBe('https://learner-api.failfastedu.com');
+});
+
+test('getRuntimeApiBase() maps learner.failfastng.com to https://learner-api.failfastng.com', () => {
+  setWindowOrigin('https://learner.failfastng.com');
+  expect(getRuntimeApiBase()).toBe('https://learner-api.failfastng.com');
+});
+
+test('getRuntimeApiBase() falls back to EXPO_PUBLIC_API_BASE when window is undefined', () => {
+  process.env.EXPO_PUBLIC_API_BASE = 'https://learner-api.failfastng.com';
+  expect(getRuntimeApiBase()).toBe('https://learner-api.failfastng.com');
+});
+
+test('getRuntimeApiBase() falls back to hardcoded default when env and window are both absent', () => {
+  delete process.env.EXPO_PUBLIC_API_BASE;
+  expect(getRuntimeApiBase()).toBe('https://learner-api.failfastng.com');
 });

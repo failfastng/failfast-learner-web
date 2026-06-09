@@ -40,3 +40,22 @@ export function getMarketingUrl(path = ''): string {
   const normalizedPath = path && !path.startsWith('/') ? `/${path}` : path;
   return `https://${marketingHost}${normalizedPath}`;
 }
+
+/**
+ * Runtime API base URL. Swaps the `learner.` subdomain for `learner-api.` so
+ * that learner.failfastedu.com calls https://learner-api.failfastedu.com, and
+ * learner.failfastng.com calls https://learner-api.failfastng.com.
+ * Falls back to EXPO_PUBLIC_API_BASE or the hardcoded default for non-browser contexts.
+ */
+export function getRuntimeApiBase(): string {
+  if (typeof window !== 'undefined' && window.location?.hostname) {
+    const { hostname } = window.location;
+    if (hostname.startsWith('learner.')) {
+      return `https://learner-api.${hostname.slice('learner.'.length)}`;
+    }
+  }
+  return (process.env.EXPO_PUBLIC_API_BASE ?? 'https://learner-api.failfastng.com').replace(
+    /\/$/,
+    '',
+  );
+}

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { getQuestionCache, setQuestionCache } from '../lib/storage';
+import { getRuntimeApiBase } from '../lib/site-url';
 import type { Question } from '../types/domain';
 
 const CACHE_TTL_MS = 86_400_000; // 24 hours
@@ -10,10 +11,8 @@ type BankState = {
   error: boolean;
 };
 
-const API_BASE = process.env.EXPO_PUBLIC_API_BASE ?? '';
-
 async function fetchBank(): Promise<Question[]> {
-  const res = await fetch(`${API_BASE}/questions`);
+  const res = await fetch(`${getRuntimeApiBase()}/questions`);
   if (!res.ok) throw new Error(`GET /questions returned ${res.status}`);
   return (await res.json()) as Question[];
 }

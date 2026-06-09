@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { setWaitlistedAt, getSessionId } from '../lib/storage';
+import { getRuntimeApiBase } from '../lib/site-url';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -20,7 +21,7 @@ export function useWaitlist(onSuccess?: () => void) {
     setIsSubmitting(true);
     setNetworkError(false);
     try {
-      const res = await fetch(`${process.env.EXPO_PUBLIC_API_BASE}/waitlist`, {
+      const res = await fetch(`${getRuntimeApiBase()}/waitlist`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
