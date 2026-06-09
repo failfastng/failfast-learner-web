@@ -12,6 +12,7 @@ import { locked } from '../copy/locked';
 import { getDisplayName } from '../lib/displayName';
 import { shareApp } from '../lib/share';
 import { useWaitlist } from '../hooks/useWaitlist';
+import { getMarketingUrl } from '../lib/site-url';
 import { Toast } from './Toast';
 
 type Props = {
@@ -104,7 +105,7 @@ export function WaitlistSection({ variant, alreadyWaitlisted = false, onWaitlist
         {locked.waitlistDisclosure}{' '}
         <Text
           style={styles.privacyLink}
-          onPress={() => Linking.openURL('https://failfastng.com/privacy')}
+          onPress={() => Linking.openURL(getMarketingUrl('/privacy'))}
           accessibilityRole="link"
         >
           Privacy

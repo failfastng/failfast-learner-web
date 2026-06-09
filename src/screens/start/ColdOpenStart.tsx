@@ -22,6 +22,7 @@ import { colors } from '../../theme/colors';
 import { fontSize, fontWeight } from '../../theme/type';
 import SubjectCard from '../../components/SubjectCard';
 import { saveDisplayName } from '../../lib/storage';
+import { getMarketingUrl } from '../../lib/site-url';
 import type { Subject } from '../../types/domain';
 
 // Subject count fallback (Open Issue #7):
@@ -58,7 +59,7 @@ export default function ColdOpenStart() {
   }
 
   function openFooterLink() {
-    Linking.openURL('https://failfastng.com');
+    Linking.openURL(getMarketingUrl());
   }
 
   return (
@@ -125,9 +126,11 @@ export default function ColdOpenStart() {
         style={styles.footer}
         onPress={openFooterLink}
         accessibilityRole="link"
-        accessibilityLabel="Open failfastng.com"
+        accessibilityLabel={`Open ${getMarketingUrl()}`}
       >
-        <Text style={styles.footerText}>{locked.footerLine}</Text>
+        <Text style={styles.footerText}>
+          {locked.footerLine.replace('[domain]', new URL(getMarketingUrl()).hostname)}
+        </Text>
       </TouchableOpacity>
     </ScrollView>
   );

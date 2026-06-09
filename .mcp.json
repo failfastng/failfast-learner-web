@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "qmd-failfast": {
+      "command": "python3",
+      "args": [
+        "/Users/propersam/code/failfast/failfast-llm-wiki/tools/qmd-mcp-logged.py",
+        "--",
+        "qmd",
+        "mcp"
+      ],
+      "cwd": "/Users/propersam/code/failfast/failfast-llm-wiki",
+      "env": { "QMD_AGENT": "failfast-learner-web" }
+    }
+  }
+}

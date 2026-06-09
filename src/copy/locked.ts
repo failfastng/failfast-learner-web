@@ -18,7 +18,7 @@ export const locked = {
   subjectSubLabelEnglish: 'Comprehension, grammar, vocabulary',
   subjectSubLabelEconomics: 'Micro, macro, trade',
   startButton: 'Start Practice',
-  footerLine: 'A preview of FailFast. Full platform launching soon — failfastng.com',
+  footerLine: 'A preview of FailFast. Full platform launching soon — [domain]',
   resetLink: 'Reset progress',
 
   // ── Reset modal ───────────────────────────────────────────────────────────

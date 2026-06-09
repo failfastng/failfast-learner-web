@@ -1,9 +1,7 @@
 import { locked } from '../copy/locked';
 import { postShareEvent } from './analytics';
 import { getSessionId } from './storage';
-import { getSiteUrl } from './site-url';
-
-const SHARE_URL = `${getSiteUrl()}/?utm_source=share&utm_medium=link`;
+import { getRuntimeSiteUrl } from './site-url';
 
 // ── Module-level clicked-share flag ──────────────────────────────────────────
 // Set to true the first time shareApp() is called in any session.
@@ -23,7 +21,8 @@ export async function shareApp(): Promise<'shared' | 'copied' | 'dismissed'> {
   _clickedShareThisSession = true;
   postShareEvent(getSessionId());
 
-  const text = locked.shareText.replace('[link]', SHARE_URL);
+  const shareUrl = `${getRuntimeSiteUrl()}/?utm_source=share&utm_medium=link`;
+  const text = locked.shareText.replace('[link]', shareUrl);
   const nav = navigator as Navigator & { share?: (data: { text: string }) => Promise<void> };
   if (typeof navigator !== 'undefined' && typeof nav.share === 'function') {
     try {
