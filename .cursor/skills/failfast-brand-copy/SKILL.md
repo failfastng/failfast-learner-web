@@ -23,8 +23,8 @@ button label or a full marketing email.
 > session, opportunity prize, fulfillment bond, performance profile, NIN verification,
 > peer review), employability pricing facts, under-18 money-visibility rules, sponsor-page
 > rules for interactive and opportunity-prize copy, and UI patterns for greyed marketplace
-> cards and fulfillment confirmation. The greyed-card strings are drafts pending final
-> copy treatment.
+> cards and fulfillment confirmation. The greyed-card strings were finalized on
+> 11 June 2026.
 
 ---
 
@@ -334,10 +334,10 @@ When writing strings for the actual application (not the waitlist site):
 **Tier promotion screens:** Celebrate the arrival, not the distance remaining. Lead with what just unlocked. Show "progress to next tier" as secondary, not primary.
 
 **Greyed-out marketplace cards (SD-101 — one card, three audiences, three messages):**
-- Under-18 account: plain and final, no call to action, no naira amounts anywhere on the card. Draft: "This challenge is not available for your account." Nothing about money, nothing about turning 18 on the card itself.
-- 18+ not yet NIN-verified: the card is the verification doorway. Draft: "Verify your NIN to unlock real-money challenges." Verb-first, one step, no amounts shown until verified.
-- Verified but below the required tier: the existing progression message stands. "Requires Expert tier in Physics. You are currently Skilled."
-- These three are drafts pending final copy treatment; the rule that is NOT negotiable: no naira figure ever renders for an unqualified viewer.
+- Under-18 account: plain and final, no call to action, no naira amounts anywhere on the card. Final: "This challenge is not available for your account." Nothing about money, nothing about turning 18 on the card itself.
+- 18+ not yet NIN-verified: the card is the verification doorway. Final: "Verify your NIN to unlock real-naira challenges." Verb-first, one step, routes into the NIN flow, no amounts shown until verified. ("real naira," not "real money," per section 4.)
+- Verified but below the required tier: the existing progression message stands. Final: "Requires Expert tier in Physics. You are currently Skilled."
+- The rule that is NOT negotiable: no naira figure ever renders for an unqualified viewer.
 
 **Fulfillment confirmation screens (SD-109):** the confirm action closes the winner's dispute window, so the copy must say so before the tap. Required sense, in platform voice: "Confirm only after you have used or checked this prize. Confirming closes your dispute window." Never bury this in fine print; it is the line that protects the user.
 
