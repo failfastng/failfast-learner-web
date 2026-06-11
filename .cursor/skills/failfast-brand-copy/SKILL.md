@@ -293,7 +293,7 @@ These words are forbidden in FailFast copy:
 - Speak to the admin, not the student
 - Hero framing: control, privacy, data, no Arena bleed-through
 - Pricing section: term-based billing, account-day tracking, no surprises
-- CTA: "We are looking for five schools to build this with." — partnership language, not
+- CTA: "We are looking for ten schools to build this with." — partnership language, not
   product signup language
 - Never use "subscription"
 
