@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { setWaitlistedAt, getSessionId } from '../lib/storage';
 import { getRuntimeApiBase } from '../lib/site-url';
+import { trackEvent } from '../lib/gtag';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -34,6 +35,7 @@ export function useWaitlist(onSuccess?: () => void) {
       if (!res.ok && res.status !== 200) throw new Error(`status ${res.status}`);
       setWaitlistedAt(new Date().toISOString());
       setJustSubmitted(true);
+      trackEvent('waitlist_signup');
       onSuccess?.();
     } catch {
       setNetworkError(true);

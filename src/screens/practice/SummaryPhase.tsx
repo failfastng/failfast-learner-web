@@ -22,6 +22,7 @@ import { getDisplayName } from '../../lib/displayName';
 import type { Href } from 'expo-router';
 import { hashDisplayName } from '../../lib/hash';
 import { buildSessionEndPayload, postSessionEnd, postReview } from '../../lib/analytics';
+import { trackEvent } from '../../lib/gtag';
 import { selectSummaryVariant, countCorrections, countWalkThroughs } from '../../lib/summary';
 import { shareApp } from '../../lib/share';
 import { locked } from '../../copy/locked';
@@ -149,6 +150,7 @@ export function SummaryPhase({ state, dispatch, subject }: Props) {
   function handleReviewSubmit() {
     if (!reviewText.trim()) return;
     postReview(reviewText.trim(), 'summary');
+    trackEvent('review_submit', { source: 'summary' });
     setReviewSubmitted(true);
     setShowReviewToast(true);
   }

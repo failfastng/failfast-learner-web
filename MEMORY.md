@@ -27,6 +27,13 @@ Options are shuffled in `useQuestionBank` at load time (not stored back to cache
 - `postShareEvent(sessionId)` fires inside `shareApp()` the moment the user taps — not in a summary effect.
 - `useWaitlist` passes `session_uuid: getSessionId()` in the payload so the API can patch `completed_waitlist_signup`.
 
+## Google Analytics (GA4)
+
+- GA uses `EXPO_PUBLIC_GA_MEASUREMENT_ID` — set in Cloudflare Pages at build time; omit locally to skip gtag.
+- Script injection lives in `app/+html.tsx` (export-time head). Route pageviews are tracked in `app/_layout.tsx` via `GaPageViewTracker` and `src/lib/gtag.ts`.
+- Product events (`share`, `reset`, `review_submit`, `waitlist_signup`) call `trackEvent()` alongside existing first-party API analytics. No PII in GA event params.
+- First-party API analytics (`src/lib/analytics.ts`) is separate from GA — do not merge them.
+
 ## Copy / UI conventions propersam cares about
 
 - **Singular/plural**: always check counts before inserting into copy strings. "1 questions" and "corrected yourself 1 times" are bugs. Use ternary at replacement site: `` `${n} ${n === 1 ? 'time' : 'times'}` ``

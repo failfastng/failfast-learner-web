@@ -53,6 +53,7 @@ If you add or edit records for Learner web, only add the **`learner`** CNAME des
    | `NODE_VERSION`           | `22`                                       |
    | `EXPO_PUBLIC_API_BASE`   | `https://learner-api.failfastng.com`         |
    | `EXPO_PUBLIC_SITE_URL`   | `https://learner.failfastng.com`           |
+   | `EXPO_PUBLIC_GA_MEASUREMENT_ID` | `G-XXXXXXXXXX` (optional; omit locally to skip GA) |
 
 6. Click **Save and Deploy**
 7. Wait for the first build — typically 2–4 minutes. Cloudflare assigns **`https://failfast-learner-web.pages.dev`** (or a suffix variant if the name was taken—copy the exact hostname from the project overview).
@@ -171,7 +172,7 @@ Confirm `www.failfastng.com` / apex behave as you intend for the marketing site 
 ## Checklist
 
 - [ ] CF Pages project **`failfast-learner-web`** created; first build green
-- [ ] Env vars: `EXPO_PUBLIC_API_BASE`, `EXPO_PUBLIC_SITE_URL`, `NODE_VERSION`
+- [ ] Env vars: `EXPO_PUBLIC_API_BASE`, `EXPO_PUBLIC_SITE_URL`, `EXPO_PUBLIC_GA_MEASUREMENT_ID` (optional), `NODE_VERSION`
 - [ ] Custom domain **`learner.failfastng.com`** active on the Pages project
 - [ ] CNAME **`learner` → `failfast-learner-web.pages.dev`** at authoritative DNS (Cloudflare or Squarespace, depending on where DNS lives)
 - [ ] **`curl`** OG probe against **`https://learner.failfastng.com`** passes

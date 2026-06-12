@@ -20,6 +20,7 @@ import { getDisplayName } from '../../lib/displayName';
 import { saveDisplayName } from '../../lib/storage';
 import { shareApp } from '../../lib/share';
 import { postReview } from '../../lib/analytics';
+import { trackEvent } from '../../lib/gtag';
 import { Toast } from '../../components/Toast';
 import type { Subject } from '../../types/domain';
 
@@ -40,6 +41,7 @@ export default function ReturningStart() {
   function handleReviewSubmit() {
     if (!reviewText.trim()) return;
     postReview(reviewText.trim(), 'returning_start');
+    trackEvent('review_submit', { source: 'returning_start' });
     setReviewSubmitted(true);
     setShowReviewToast(true);
   }

@@ -4,8 +4,10 @@
 import { type PropsWithChildren } from 'react';
 import { ScrollViewStyleReset } from 'expo-router/html';
 import { getSiteUrl } from '../src/lib/site-url';
+import { getGaMeasurementId } from '../src/lib/gtag';
 
 const siteUrl = getSiteUrl();
+const gaMeasurementId = getGaMeasurementId();
 
 export default function Root({ children }: PropsWithChildren) {
   return (
@@ -42,6 +44,22 @@ export default function Root({ children }: PropsWithChildren) {
 
         <link rel="icon" href="/favicon.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+        {gaMeasurementId ? (
+          <>
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`} />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${gaMeasurementId}', { send_page_view: false });
+                `,
+              }}
+            />
+          </>
+        ) : null}
       </head>
       <body>{children}</body>
     </html>

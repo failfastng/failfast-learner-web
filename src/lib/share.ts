@@ -1,5 +1,6 @@
 import { locked } from '../copy/locked';
 import { postShareEvent } from './analytics';
+import { trackEvent } from './gtag';
 import { getSessionId } from './storage';
 import { getRuntimeSiteUrl } from './site-url';
 
@@ -20,6 +21,7 @@ export function resetClickedShare(): void {
 export async function shareApp(): Promise<'shared' | 'copied' | 'dismissed'> {
   _clickedShareThisSession = true;
   postShareEvent(getSessionId());
+  trackEvent('share');
 
   const shareUrl = `${getRuntimeSiteUrl()}/?utm_source=share&utm_medium=link`;
   const text = locked.shareText.replace('[link]', shareUrl);
