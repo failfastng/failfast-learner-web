@@ -31,7 +31,7 @@ button label or a full marketing email.
 ## 1. The Platform in One Paragraph
 
 FailFast is a skill-based knowledge competition platform built around a single idea:
-failing is the first step to knowing. The scoring system rewards every attempt, including
+failing is the first step to learning. The scoring system rewards every attempt, including
 wrong answers. Users practice in FailFast Mine, build a subject-specific tier ranking, and
 compete in group challenges for real naira. FailFast EDU brings the same fail-forward
 mechanics to schools and tutorial centers without any real-money features. FailFast Arena
@@ -52,7 +52,7 @@ answers).
 | EDU product | FailFast EDU |
 | Practice mode | FailFast Mine |
 | Social handle | @failFastNG (lowercase f, uppercase NG) |
-| Brand philosophy | Fail-forward: failing is the first step to knowing |
+| Brand philosophy | Fail-forward: failing is the first step to learning |
 
 **Color theme (reference only — do not dictate implementation):**
 - Homepage + Arena accent: Orange `#ff6b35`
