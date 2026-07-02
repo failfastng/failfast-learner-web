@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://learner.failfastng.com/sitemap.xml

@@ -14,7 +14,9 @@
 | **Production site (canonical)** | `https://learner.failfastng.com` — custom domain on the **same** Pages project |
 | **Learner API** | `https://learner-api.failfastng.com` (OCI + Caddy; not proxied through Cloudflare unless you choose to) |
 
-Every production build should set **`EXPO_PUBLIC_SITE_URL=https://learner.failfastng.com`** so Open Graph tags, `og:url`, and in-app share links point at the public domain—not at `*.pages.dev`.
+Every production build should set **`EXPO_PUBLIC_SITE_URL=https://learner.failfastng.com`** so Open Graph tags, `og:url`, in-app share links, **`/sitemap.xml`**, and **`/robots.txt`** point at the public domain—not at `*.pages.dev`.
+
+For **`learner.failfastedu.com`**, use a separate Pages project (or branch/env) with **`EXPO_PUBLIC_SITE_URL=https://learner.failfastedu.com`** and **`EXPO_PUBLIC_API_BASE=https://learner-api.failfastedu.com`**. The post-export SEO step writes domain-specific sitemap and robots files from that env var.
 
 Use **`failfast-learner-web.pages.dev`** only to smoke-test a deploy before DNS is ready, or for a deliberate staging project.
 
@@ -42,7 +44,7 @@ If you add or edit records for Learner web, only add the **`learner`** CNAME des
    | Field              | Value                                      |
    |--------------------|--------------------------------------------|
    | Production branch  | `main`                                     |
-   | Build command      | `npx expo export --platform web`        |
+   | Build command      | `npm run build`                            |
    | Build output dir   | `dist`                                     |
    | Project name       | `failfast-learner-web`                     |
 

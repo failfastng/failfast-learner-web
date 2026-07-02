@@ -47,7 +47,8 @@ Options are shuffled in `useQuestionBank` at load time (not stored back to cache
 
 ## Deployment
 
-- Cloudflare Pages builds from `main` on push — static export via `npx expo export --platform web`, output dir `dist`.
+- Cloudflare Pages builds from `main` on push — `npm run build` (`expo export --platform web` then domain-specific `sitemap.xml` / `robots.txt` from `EXPO_PUBLIC_SITE_URL`), output dir `dist`.
+- **`learner.failfastedu.com`** needs its own build env: `EXPO_PUBLIC_SITE_URL=https://learner.failfastedu.com` and matching API base. Do not reuse the ng sitemap on edu — SEO files are generated post-export, not committed in `public/`.
 - Twitter aggressively caches card previews — use Twitter Card Validator to force a fresh crawl after OG changes.
 - Facebook link previews require the Facebook Sharing Debugger "Scrape Again" to bust cache.
 - WhatsApp caches links too — sending a fresh link (add `?v=2` to bust) is the easiest way to test.

@@ -8,7 +8,9 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest",
-    "export:web": "expo export --platform web",
+    "generate:seo": "tsx scripts/generate-seo-files.ts",
+    "export:web": "expo export --platform web && npm run generate:seo -- dist",
+    "build": "npm run export:web",
     "lint": "eslint \"src/**/*.{ts,tsx}\" \"app/**/*.{ts,tsx}\" --fix",
     "prepare": "husky"
   },
@@ -45,6 +47,7 @@
     "jest-expo": "^55.0.16",
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.3",
+    "tsx": "^4.20.5",
     "typescript": "~5.9.2"
   },
   "private": true

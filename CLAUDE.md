@@ -92,7 +92,7 @@ Run `npx eslint <file> --max-warnings=0` before committing. The pre-commit hook 
 
 ## Deployment
 
-- Push to `main` → Cloudflare Pages auto-builds with `npx expo export --platform web`, output dir `dist`.
+- Push to `main` → Cloudflare Pages auto-builds with `npm run build`, output dir `dist`. `sitemap.xml` and `robots.txt` are generated post-export from `EXPO_PUBLIC_SITE_URL`.
 - After OG changes, use Twitter Card Validator to force a fresh crawl on Twitter.
 - Facebook requires the Sharing Debugger "Scrape Again" to bust its cache.
 - WhatsApp caches links aggressively — append `?v=N` to test a fresh preview.
